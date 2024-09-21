@@ -32,12 +32,12 @@ select::-ms-expand {
 }
 
 .schulte {
-    position:absolute;
-    top:50%;
-    left:50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
     -ms-transform: translateX(-50%) translateY(-50%);
-    -webkit-transform: translate(-50%,-50%);
-    transform: translate(-50%,-50%);
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 }
 
 .row {
@@ -102,34 +102,34 @@ select::-ms-expand {
     -moz-animation: spin-right 2s infinite linear;
 }
 
-    @keyframes spin-right{
-        0% {
-            -moz-transform: rotate(0deg);
-            -ms-transform: rotate(0deg);
-            -webkit-transform: rotate(0deg);
-            transform: rotate(0deg);
-        }
-        100% {
-            -moz-transform: rotate(359deg);
-            -ms-transform: rotate(359deg);
-            -webkit-transform: rotate(359deg);
-            transform: rotate(359deg);
-        }
+@keyframes spin-right {
+    0% {
+        -moz-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
     }
-    @-webkit-keyframes spin-right{
-        0% {
-            -moz-transform: rotate(0deg);
-            -ms-transform: rotate(0deg);
-            -webkit-transform: rotate(0deg);
-            transform: rotate(0deg)
-        }
-        100% {
-            -ms-transform: rotate(359deg);
-            -moz-transform: rotate(359deg);
-            -webkit-transform: rotate(359deg);
-            transform: rotate(359deg)
-        }
+    100% {
+        -moz-transform: rotate(359deg);
+        -ms-transform: rotate(359deg);
+        -webkit-transform: rotate(359deg);
+        transform: rotate(359deg);
     }
+}
+@-webkit-keyframes spin-right {
+    0% {
+        -moz-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -ms-transform: rotate(359deg);
+        -moz-transform: rotate(359deg);
+        -webkit-transform: rotate(359deg);
+        transform: rotate(359deg);
+    }
+}
 
 .spin-left {
     animation: spin-left 2s infinite linear;
@@ -137,35 +137,34 @@ select::-ms-expand {
     -moz-animation: spin-left 2s infinite linear;
 }
 
-    @keyframes spin-left{
-        0% {
-            -moz-transform: rotate(0deg);
-            -ms-transform: rotate(0deg);
-            -webkit-transform: rotate(0deg);
-            transform: rotate(0deg);
-        }
-        100% {
-            -moz-transform: rotate(-359deg);
-            -ms-transform: rotate(-359deg);
-            -webkit-transform: rotate(-359deg);
-            transform: rotate(-359deg);
-        }
+@keyframes spin-left {
+    0% {
+        -moz-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
     }
-    @-webkit-keyframes spin-left{
-        0% {
-            -moz-transform: rotate(0deg);
-            -ms-transform: rotate(0deg);
-            -webkit-transform: rotate(0deg);
-            transform: rotate(0deg)
-        }
-        100% {
-            -moz-transform: rotate(-359deg);
-            -ms-transform: rotate(-359deg);
-            -webkit-transform: rotate(-359deg);
-            transform: rotate(-359deg)
-        }
+    100% {
+        -moz-transform: rotate(-359deg);
+        -ms-transform: rotate(-359deg);
+        -webkit-transform: rotate(-359deg);
+        transform: rotate(-359deg);
     }
-
+}
+@-webkit-keyframes spin-left {
+    0% {
+        -moz-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -moz-transform: rotate(-359deg);
+        -ms-transform: rotate(-359deg);
+        -webkit-transform: rotate(-359deg);
+        transform: rotate(-359deg);
+    }
+}
 
 .cell-symbol {
     color: inherit;
@@ -226,7 +225,7 @@ select::-ms-expand {
     padding: 0;
     background: transparent url('../img/settings_48.png') no-repeat;
     background-size: 5vmin 5vmin;
-    opacity: 0.10;
+    opacity: 0.1;
     border: none;
     outline-style: none;
     transition: opacity 500ms;
@@ -261,24 +260,24 @@ select::-ms-expand {
 }
 
 .center-dot {
-    position:absolute;
-    top:50%;
-    left:50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
     width: 10px;
     height: 10px;
     -ms-transform: translateX(-50%) translateY(-50%);
-    -webkit-transform: translate(-50%,-50%);
-    transform: translate(-50%,-50%);
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
     pointer-events: none;
     background: url('../img/green_dot.png');
 }
 
 .right-click {
-	background: #fa7;
+    background: #fa7;
 }
 
 .left-click {
-	background: #99f;
+    background: #99f;
 }
 
 .round-display {
@@ -286,7 +285,7 @@ select::-ms-expand {
     top: 2px;
     font-size: 2em;
     left: 50%;
-    transform: translateX(-50%)
+    transform: translateX(-50%);
 }
 
 .spin-speed1 {
@@ -315,11 +314,15 @@ select::-ms-expand {
 
 @keyframes spin {
     100% {
-        transform: translate(-50%,-50%) rotate(360deg);
+        transform: translate(-50%, -50%) rotate(360deg);
     }
 }
 
 @keyframes spinrev {
-    0% {transform: translate(-50%,-50%) rotate(360deg);}
-    100% {transform: translate(-50%,-50%) rotate(0deg);}
+    0% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+    100% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
 }
