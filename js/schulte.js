@@ -1,97 +1,107 @@
 const PB_KEY = 'schulte-pbs';
 
-function Cell(number) {
-    this.number = number;
-    this.symbol = number;
-    this.group = 0;
-    this.traced = false;
-    this.rightClick = false;
-    this.cssClasses = {
-        'rotate-90': false,
-        'rotate-180': false,
-        'rotate-270': false,
-        'spin-right': false,
-        'spin-left': false,
-    };
-    this.isReact = false;
-    this.colorStyle = 'color: black';
+class Cell {
+    constructor(number) {
+        this.number = number;
+        this.symbol = number;
+        this.group = 0;
+        this.traced = false;
+        this.rightClick = false;
+        this.cssClasses = {
+            'rotate-90': false,
+            'rotate-180': false,
+            'rotate-270': false,
+            'spin-right': false,
+            'spin-left': false,
+        };
+        this.isReact = false;
+        this.colorStyle = 'color: black';
+    }
 }
 
-function Group(size) {
-    this.size = size;
-    this.currNum = 1;
-    this.inverted = false;
-    this.divergent = false;
-}
-
-Group.prototype.firstNumber = function () {
-    if (this.inverted && !this.divergent) {
-        return this.size;
-    } else if (this.divergent && !this.inverted) {
-        return Math.floor(this.size / 2);
-    } else {
-        return 1;
+class Group {
+    constructor(size) {
+        this.size = size;
+        this.currNum = 1;
+        this.inverted = false;
+        this.divergent = false;
     }
-};
 
-Group.prototype.lastNumber = function () {
-    if (!this.inverted) {
-        return this.size;
-    } else if (this.divergent) {
-        return Math.floor(this.size / 2) + 1;
-    } else {
-        return 1;
-    }
-};
-
-Group.prototype.nextNumber = function (currNum = this.currNum) {
-    if (!this.divergent && !this.inverted) {
-        return currNum + 1;
-    } else if (!this.divergent) {
-        return currNum - 1;
-    } else {
-        var h = Math.floor(this.size / 2);
-        if (this.inverted) {
-            if (currNum <= h) {
-                return this.size - currNum + 1;
-            } else {
-                // currNum > h
-                return 2 + (this.size - currNum);
-            }
+    firstNumber() {
+        if (this.inverted && !this.divergent) {
+            return this.size;
+        } else if (this.divergent && !this.inverted) {
+            return Math.floor(this.size / 2);
         } else {
-            var evenSize = 2 * h;
-            if (currNum == evenSize) {
-                return evenSize + 1;
-            } else if (currNum <= h) {
-                return evenSize - currNum + 1;
+            return 1;
+        }
+    }
+
+    lastNumber() {
+        if (!this.inverted) {
+            return this.size;
+        } else if (this.divergent) {
+            return Math.floor(this.size / 2) + 1;
+        } else {
+            return 1;
+        }
+    }
+
+    nextNumber(currNum = this.currNum) {
+        if (!this.divergent && !this.inverted) {
+            return currNum + 1;
+        } else if (!this.divergent) {
+            return currNum - 1;
+        } else {
+            var h = Math.floor(this.size / 2);
+            if (this.inverted) {
+                if (currNum <= h) {
+                    return this.size - currNum + 1;
+                } else {
+                    // currNum > h
+                    return 2 + (this.size - currNum);
+                }
             } else {
-                return evenSize - currNum;
+                var evenSize = 2 * h;
+                if (currNum == evenSize) {
+                    return evenSize + 1;
+                } else if (currNum <= h) {
+                    return evenSize - currNum + 1;
+                } else {
+                    return evenSize - currNum;
+                }
             }
         }
     }
-};
-
-function Point(x, y) {
-    this.x = x;
-    this.y = y;
 }
 
-function Click(x, y, correct) {
-    this.x = x;
-    this.y = y;
-    this.correct = correct;
+class Point {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+    }
 }
 
-function ClickStats(groupN, number, time, err, inverse, divergent) {
-    this.groupN = groupN;
-    this.number = number;
-    this.time = time;
-    this.err = err;
-    this.inverse = inverse;
-    this.divergent = divergent;
+class Click {
+    constructor(x, y, correct) {
+        this.x = x;
+        this.y = y;
+        this.correct = correct;
+    }
 }
 
-var timeString = function (diff) {
+class ClickStats {
+    constructor(groupN, number, time, err, inverse, divergent) {
+        this.groupN = groupN;
+        this.number = number;
+        this.time = time;
+        this.err = err;
+        this.inverse = inverse;
+        this.divergent = divergent;
+    }
+}
+
+function timeString(diff) {
     var millis = Math.floor(diff % 1000);
     diff = diff / 1000;
     var seconds = Math.floor(diff % 60);
@@ -105,7 +115,7 @@ var timeString = function (diff) {
         '.' +
         ('00' + millis).slice(-3)
     );
-};
+}
 
 var appData = {
     gridSize: 5,
