@@ -53,7 +53,7 @@ class Group {
         } else if (!this.divergent) {
             return currNum - 1;
         } else {
-            var h = Math.floor(this.size / 2);
+            const h = Math.floor(this.size / 2);
             if (this.inverted) {
                 if (currNum <= h) {
                     return this.size - currNum + 1;
@@ -62,7 +62,7 @@ class Group {
                     return 2 + (this.size - currNum);
                 }
             } else {
-                var evenSize = 2 * h;
+                const evenSize = 2 * h;
                 if (currNum == evenSize) {
                     return evenSize + 1;
                 } else if (currNum <= h) {
@@ -102,11 +102,11 @@ class ClickStats {
 }
 
 function timeString(diff) {
-    var millis = Math.floor(diff % 1000);
+    const millis = Math.floor(diff % 1000);
     diff = diff / 1000;
-    var seconds = Math.floor(diff % 60);
+    const seconds = Math.floor(diff % 60);
     diff = diff / 60;
-    var minutes = Math.floor(diff);
+    const minutes = Math.floor(diff);
 
     return (
         minutes +
@@ -224,8 +224,8 @@ var appData = {
             this.rounds = [];
         },
         addClick: function (groupN, number, err, inverse, divergent) {
-            var currTime = new Date();
-            var time = ((currTime - this.lastTime) / 1000).toFixed(2);
+            const currTime = new Date();
+            const time = ((currTime - this.lastTime) / 1000).toFixed(2);
             this.clicks.push(
                 new ClickStats(groupN, number, time, err, inverse, divergent),
             );
@@ -281,7 +281,7 @@ var appData = {
             return stat ? stat.clicks : [];
         },
         bestRoundTime: function () {
-            var result = Infinity;
+            let result = Infinity;
             for (const round of this.rounds) {
                 result = Math.min(result, round.stopTime - round.startTime);
             }
@@ -291,8 +291,8 @@ var appData = {
             return timeString(this.roundTime(round));
         },
         totalTime: function () {
-            var result = 0;
-            for (var i = 1; i <= this.rounds.length; i++) {
+            let result = 0;
+            for (let i = 1; i <= this.rounds.length; i++) {
                 result += this.roundTime(i);
             }
             return result;
@@ -312,7 +312,7 @@ Vue.directive('focus', {
     },
 });
 
-vueApp = new Vue({
+var vueApp = new Vue({
     el: '#app',
     data: appData,
     created: function () {
@@ -473,7 +473,7 @@ vueApp = new Vue({
             this.stats.endRound();
             this.betweenRounds = true;
             this.stopMouseTracking();
-            for (var i = 0; i < this.cells.length; i++) {
+            for (let i = 0; i < this.cells.length; i++) {
                 this.cells[i].symbol = '';
             }
         },
@@ -555,10 +555,10 @@ vueApp = new Vue({
 
                 // append mouseClick
                 if (this.mouseTracking) {
-                    let shiftX = (window.innerWidth - this.tableWidth) / 2;
-                    let shiftY = (window.innerHeight - this.tableHeight) / 2;
-                    let nx = event.clientX - shiftX;
-                    let ny = event.clientY - shiftY;
+                    const shiftX = (window.innerWidth - this.tableWidth) / 2;
+                    const shiftY = (window.innerHeight - this.tableHeight) / 2;
+                    const nx = event.clientX - shiftX;
+                    const ny = event.clientY - shiftY;
                     this.mouseClicks.push(
                         new Click(nx, ny, this.isCellCorrect(this.clickIndex)),
                     );
@@ -583,7 +583,7 @@ vueApp = new Vue({
                 if (correctClick) {
                     if (this.clickSound && this.useClickSound) {
                         // play click sound and copy so they can overlap
-                        newBoop = this.clickSound.cloneNode();
+                        let newBoop = this.clickSound.cloneNode();
                         newBoop.play();
                         newBoop = null;
                     }
@@ -604,13 +604,13 @@ vueApp = new Vue({
                         if (this.frenzyCount == 1) {
                             this.cells[this.clickIndex].isReact = false;
                         }
-                        var nextGoal = Math.min(
+                        const nextGoal = Math.min(
                             this.cells.length - 1,
                             this.stats.correctClicks +
                                 parseInt(this.frenzyCount) -
                                 1,
                         );
-                        for (var i = 0; i < this.cells.length; i++) {
+                        for (let i = 0; i < this.cells.length; i++) {
                             if (
                                 this.cells[i].group ==
                                     this.goalList[nextGoal][0] &&
@@ -631,7 +631,7 @@ vueApp = new Vue({
                     }
                     if (this.blindMode) {
                         if (this.stats.correctClicks == 1) {
-                            for (var i = 0; i < this.cells.length; i++) {
+                            for (let i = 0; i < this.cells.length; i++) {
                                 this.cells[i].blindSymbol =
                                     this.cells[i].symbol;
                                 this.cells[i].symbol = '';
@@ -706,8 +706,8 @@ vueApp = new Vue({
             );
         },
         indexOfCorrectCell: function () {
-            var index = -1;
-            for (var i = 0; i < this.cells.length; i++) {
+            let index = -1;
+            for (let i = 0; i < this.cells.length; i++) {
                 if (this.isCellCorrect(i)) {
                     index = i;
                     break;
@@ -716,8 +716,8 @@ vueApp = new Vue({
             return index;
         },
         indexOfCellByNumber: function (number) {
-            var index = -1;
-            for (var i = 0; i < this.cells.length; i++) {
+            let index = -1;
+            for (let i = 0; i < this.cells.length; i++) {
                 if (this.cells[i].number === number) {
                     index = i;
                     break;
@@ -726,7 +726,7 @@ vueApp = new Vue({
             return index;
         },
         nextNum: function () {
-            var isLast =
+            const isLast =
                 this.groups[this.currGroup].lastNumber() ==
                 this.groups[this.currGroup].currNum;
             this.groups[this.currGroup].currNum =
@@ -742,7 +742,7 @@ vueApp = new Vue({
         groupRange: function (groupIdx) {
             if (groupIdx >= 0 && groupIdx < this.groups.length) {
                 if (this.groups[groupIdx].divergent) {
-                    var h = Math.floor(this.groups[groupIdx].size / 2);
+                    const h = Math.floor(this.groups[groupIdx].size / 2);
                     if (this.groups[groupIdx].inverted) {
                         return (
                             '1&rarr;|' + '&larr;' + this.groups[groupIdx].size
@@ -765,51 +765,49 @@ vueApp = new Vue({
         },
         makeRange: function (begin, end) {
             //range = Array.from({length: val}, (v, k) => k);
-            var range = [];
-            for (var i = begin; i <= end; i++) {
+            const range = [];
+            for (let i = begin; i <= end; i++) {
                 range.push(i);
             }
             return range;
         },
         makeGridCells: function () {
-            var g, i;
             this.groups.length = 0;
-            var cellCount = this.gridSize * this.gridSize;
+            const cellCount = this.gridSize * this.gridSize;
             this.gridRange = this.makeRange(0, this.gridSize - 1);
-            var numsInGroup = Math.floor(cellCount / this.groupCount);
-            for (g = 0; g < this.groupCount; g++) {
+            const numsInGroup = Math.floor(cellCount / this.groupCount);
+            for (let g = 0; g < this.groupCount; g++) {
                 this.groups.push(new Group(numsInGroup));
             }
-            for (var i = 0; i < cellCount % this.groupCount; i++) {
+            for (let i = 0; i < cellCount % this.groupCount; i++) {
                 this.groups[i].size++;
             }
 
             if (this.variousCounts) {
-                var various = [
+                const various = [
                     { divergent: false, inverted: false },
                     { divergent: false, inverted: true },
                     { divergent: true, inverted: false },
                     { divergent: true, inverted: true },
                 ];
-                for (g = 0; g < this.groupCount; g++) {
+                for (let g = 0; g < this.groupCount; g++) {
                     this.groups[g].inverted = various[g % 4].inverted;
                     this.groups[g].divergent = various[g % 4].divergent;
                 }
             } else {
-                for (g = 0; g < this.groupCount; g++) {
+                for (let g = 0; g < this.groupCount; g++) {
                     this.groups[g].divergent = this.divergentCount;
                     this.groups[g].inverted = this.inverseCount;
                 }
             }
-            for (g = 0; g < this.groupCount; g++) {
+            for (let g = 0; g < this.groupCount; g++) {
                 this.groups[g].currNum = this.groups[g].firstNumber();
             }
 
-            var range = [];
-            var cell = null;
-            for (g = 0; g < this.groupCount; g++) {
-                for (i = 1; i <= this.groups[g].size; i++) {
-                    cell = new Cell(i);
+            const range = [];
+            for (let g = 0; g < this.groupCount; g++) {
+                for (let i = 1; i <= this.groups[g].size; i++) {
+                    let cell = new Cell(i);
                     cell.group = g;
                     if (!isNaN(parseInt(this.nOffset))) {
                         cell.symbol = cell.number + parseInt(this.nOffset) + '';
@@ -828,15 +826,15 @@ vueApp = new Vue({
             if (this.frenzyMode) {
                 // generate goal list
                 this.goalList = [[0, this.groups[0].currNum]];
-                var groupNums = [];
-                for (g = 0; g < this.groupCount; g++) {
+                const groupNums = [];
+                for (let g = 0; g < this.groupCount; g++) {
                     groupNums[g] = this.groups[g].currNum;
                 }
-                for (i = 0; i < this.gridSize * this.gridSize - 1; i++) {
+                for (let i = 0; i < this.gridSize * this.gridSize - 1; i++) {
                     // code to compute next goal - taken from nextNum() and nextGroup()
-                    var thisGroup = this.goalList[i][0],
+                    let thisGroup = this.goalList[i][0],
                         thisNum = this.goalList[i][1];
-                    var isLast = this.groups[thisGroup].lastNumber() == thisNum;
+                    const isLast = this.groups[thisGroup].lastNumber() == thisNum;
                     groupNums[thisGroup] =
                         this.groups[thisGroup].nextNumber(thisNum);
                     if (isLast || this.collateGroups) {
@@ -846,13 +844,13 @@ vueApp = new Vue({
                 }
 
                 // clear symbols
-                for (i = 0; i < cellCount; i++) {
+                for (let i = 0; i < cellCount; i++) {
                     this.cells[i].symbol = '';
                 }
 
                 // set first few symbols
-                for (i = 0; i < this.frenzyCount; i++) {
-                    for (g = 0; g < cellCount; g++) {
+                for (let i = 0; i < this.frenzyCount; i++) {
+                    for (let g = 0; g < cellCount; g++) {
                         if (
                             this.cells[g].group == this.goalList[i][0] &&
                             this.cells[g].number == this.goalList[i][1]
@@ -870,14 +868,14 @@ vueApp = new Vue({
             }
             if (this.mathMode) {
                 // generate list of numbers
-                var numberList = [[0, '0']];
-                integerMax = Math.floor((this.gridSize * this.gridSize) / 2);
-                for (i = 1; i <= integerMax; i++) {
+                let numberList = [[0, '0']];
+                const integerMax = Math.floor((this.gridSize * this.gridSize) / 2);
+                for (let i = 1; i <= integerMax; i++) {
                     numberList.push([i, i + '']);
                     numberList.push([-i, '-' + i]);
                 }
-                fractionMax = Math.max(9, 2 * this.gridSize);
-                for (i = 2; i <= fractionMax; i++) {
+                const fractionMax = Math.max(9, 2 * this.gridSize);
+                for (let i = 2; i <= fractionMax; i++) {
                     numberList.push([1 / i, '1/' + i]);
                     numberList.push([-1 / i, '-1/' + i]);
                     if (i > 2) {
@@ -885,7 +883,7 @@ vueApp = new Vue({
                         numberList.push([-1 + 1 / i, '-' + (i - 1) + '/' + i]);
                     }
                 }
-                for (i = 3; i <= integerMax; i += 2) {
+                for (let i = 3; i <= integerMax; i += 2) {
                     numberList.push([i / 2, i + '/2']);
                     numberList.push([-i / 2, '-' + i + '/2']);
                 }
@@ -899,11 +897,11 @@ vueApp = new Vue({
                 }
 
                 // choose random values
-                for (var i = 0; i < numberList.length; i++) {
-                    var other =
+                for (let i = 0; i < numberList.length; i++) {
+                    const other =
                         i + Math.floor(Math.random() * (numberList.length - i));
                     if (other != i) {
-                        var temp = numberList[i];
+                        const temp = numberList[i];
                         numberList[i] = numberList[other];
                         numberList[other] = temp;
                     }
@@ -915,13 +913,13 @@ vueApp = new Vue({
                 numberList.sort(comparePairs);
 
                 // set cells' symbols to those values
-                for (i = 0; i < cellCount; i++) {
+                for (let i = 0; i < cellCount; i++) {
                     this.cells[i].symbol =
                         numberList[this.cells[i].number - 1][1];
                 }
             } else if (this.lettersMode) {
                 // set cells' symbols to those values
-                for (i = 0; i < cellCount; i++) {
+                for (let i = 0; i < cellCount; i++) {
                     this.cells[i].symbol = String.fromCharCode(
                         this.cells[i].number + 64,
                     );
@@ -929,11 +927,11 @@ vueApp = new Vue({
             }
         },
         shuffleCells: function () {
-            for (var i = 0; i < this.cells.length; i++) {
-                var other =
+            for (let i = 0; i < this.cells.length; i++) {
+                const other =
                     i + Math.floor(Math.random() * (this.cells.length - i));
                 if (other != i) {
-                    var temp = this.cells[i];
+                    const temp = this.cells[i];
                     this.cells[i] = this.cells[other];
                     this.cells[other] = temp;
                 }
@@ -993,17 +991,17 @@ vueApp = new Vue({
             }
         },
         changeGridSize: function (event) {
-            var val = parseInt(event.target.value);
+            const val = parseInt(event.target.value);
             if (!isNaN(val) && val >= 2 && val <= 9) {
                 this.gridSize = val;
             }
         },
         updateSymbolSpins: function () {
-            for (var i = 0; i < this.cells.length; i++) {
+            for (let i = 0; i < this.cells.length; i++) {
                 this.cells[i].cssClasses['spin-left'] = false;
                 this.cells[i].cssClasses['spin-right'] = false;
                 if (this.spinSymbols) {
-                    var rnd = Math.floor(Math.random() * 2);
+                    const rnd = Math.floor(Math.random() * 2);
                     if (rnd === 0) {
                         this.cells[i].cssClasses['spin-left'] = true;
                     } else {
@@ -1013,12 +1011,12 @@ vueApp = new Vue({
             }
         },
         updateSymbolTurns: function () {
-            for (var i = 0; i < this.cells.length; i++) {
+            for (let i = 0; i < this.cells.length; i++) {
                 this.cells[i].cssClasses['rotate-90'] = false;
                 this.cells[i].cssClasses['rotate-180'] = false;
                 this.cells[i].cssClasses['rotate-270'] = false;
                 if (this.turnSymbols) {
-                    var rnd = Math.floor(Math.random() * 4);
+                    const rnd = Math.floor(Math.random() * 4);
                     switch (rnd) {
                         case 0:
                             this.cells[i].cssClasses['rotate-90'] = true;
@@ -1039,7 +1037,7 @@ vueApp = new Vue({
             if (!this.turnSymbols && !this.spinSymbols && !this.spinTable)
                 return;
             const confusing = new Set([6, 9, 66, 99, 68, 98, 86, 89]);
-            for (var i = 0; i < this.cells.length; i++) {
+            for (let i = 0; i < this.cells.length; i++) {
                 if (confusing.has(this.cells[i].number)) {
                     this.cells[i].cssClasses['underline'] = true;
                 }
@@ -1066,7 +1064,7 @@ vueApp = new Vue({
         },
         category: function () {
             // things ignored: collate; original colors; show hover; show click result; show center dot
-            var category = this.gridSize + 'x' + this.gridSize;
+            let category = this.gridSize + 'x' + this.gridSize;
             if (this.rounds > 1) {
                 category += ' ' + this.rounds + 'r';
                 category += this.roundBreaks ? 'b' : '';
@@ -1151,19 +1149,19 @@ vueApp = new Vue({
         },
         appendMouseMove: function (event) {
             if (this.flashlightMode) {
-                x = event.x;
-                y = event.y;
-                for (i = 0; i < this.gridSize; i++) {
-                    for (j = 0; j < this.gridSize; j++) {
-                        elem = document.getElementById('cell.' + i + '.' + j);
-                        rect = elem.getBoundingClientRect();
-                        cellMidX = rect.x + rect.width / 2;
-                        cellMidY = rect.y + rect.height / 2;
-                        dist = Math.sqrt(
+                const x = event.x;
+                const y = event.y;
+                for (let i = 0; i < this.gridSize; i++) {
+                    for (let j = 0; j < this.gridSize; j++) {
+                        const elem = document.getElementById('cell.' + i + '.' + j);
+                        const rect = elem.getBoundingClientRect();
+                        const cellMidX = rect.x + rect.width / 2;
+                        const cellMidY = rect.y + rect.height / 2;
+                        const dist = Math.sqrt(
                             (cellMidX - x) * (cellMidX - x) +
                                 (cellMidY - y) * (cellMidY - y),
                         );
-                        opacity =
+                        let opacity =
                             (this.tableSize * 0.35 - dist) /
                             (this.tableSize * 0.1);
                         if (opacity > 1) opacity = 1;
@@ -1277,13 +1275,13 @@ vueApp = new Vue({
             }
         },
         drawMousemap: function () {
-            var canvas = this.$refs['mousemap_canvas']; // if mousemapTab visible
+            const canvas = this.$refs['mousemap_canvas']; // if mousemapTab visible
             if (canvas) {
-                var ctx = canvas.getContext('2d');
+                const ctx = canvas.getContext('2d');
                 if (ctx) {
                     // clear canvas
-                    var W = canvas.width;
-                    var H = canvas.height;
+                    const W = canvas.width;
+                    const H = canvas.height;
                     ctx.fillStyle = 'white';
                     ctx.clearRect(0, 0, W, H);
 
@@ -1295,12 +1293,12 @@ vueApp = new Vue({
         },
         drawMousemapGrid: function (ctx, W, H) {
             if (ctx && this.gridSize > 0) {
-                var rowH = H / this.gridSize;
-                var colW = W / this.gridSize;
+                const rowH = H / this.gridSize;
+                const colW = W / this.gridSize;
                 ctx.strokeStyle = '#ccc';
                 ctx.lineWidth = 2;
                 ctx.beginPath();
-                for (var i = 1; i < this.gridSize; i++) {
+                for (let i = 1; i < this.gridSize; i++) {
                     ctx.moveTo(i * colW, 0);
                     ctx.lineTo(i * colW, H);
                     ctx.moveTo(0, i * rowH);
@@ -1315,11 +1313,11 @@ vueApp = new Vue({
                 ctx.beginPath();
                 ctx.strokeStyle = '#1f6ef7'; //'#f78383';
                 ctx.lineWidth = 2;
-                for (var i = 0; i + 1 < this.mouseMoves.length; i++) {
-                    var x0 = this.mouseMoves[i].x * W;
-                    var y0 = this.mouseMoves[i].y * H;
-                    var x1 = this.mouseMoves[i + 1].x * W;
-                    var y1 = this.mouseMoves[i + 1].y * H;
+                for (let i = 0; i + 1 < this.mouseMoves.length; i++) {
+                    const x0 = this.mouseMoves[i].x * W;
+                    const y0 = this.mouseMoves[i].y * H;
+                    const x1 = this.mouseMoves[i + 1].x * W;
+                    const y1 = this.mouseMoves[i + 1].y * H;
                     ctx.moveTo(x0, y0);
                     ctx.lineTo(x1, y1);
                 }
@@ -1330,10 +1328,10 @@ vueApp = new Vue({
         drawMousemapClicks: function (ctx, W, H) {
             if (ctx) {
                 ctx.lineWidth = 2;
-                var radius = 5;
-                for (var i = 0; i < this.mouseClicks.length; i++) {
-                    var centerX = this.mouseClicks[i].x * W;
-                    var centerY = this.mouseClicks[i].y * H;
+                const radius = 5;
+                for (let i = 0; i < this.mouseClicks.length; i++) {
+                    const centerX = this.mouseClicks[i].x * W;
+                    const centerY = this.mouseClicks[i].y * H;
                     ctx.beginPath();
                     if (this.mouseClicks[i].correct) {
                         ctx.fillStyle = '#52a352'; //'#6ac46a';
