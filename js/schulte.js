@@ -212,24 +212,24 @@ var appData = {
     clickSound: false,
 
     stats: {
-        startTime: new Date(),
-        stopTime: new Date(),
-        lastTime: new Date(),
+        startTime: performance.now(),
+        stopTime: performance.now(),
+        lastTime: performance.now(),
         correctClicks: 0,
         wrongClicks: 0,
         clicks: [], // array of ClickStats
         rounds: [],
         clear() {
-            this.startTime = new Date();
-            this.stopTime = new Date();
-            this.lastTime = new Date();
+            this.startTime = performance.now();
+            this.stopTime = performance.now();
+            this.lastTime = performance.now();
             this.correctClicks = 0;
             this.wrongClicks = 0;
             this.clicks = [];
             this.rounds = [];
         },
         addClick(groupN, number, err, inverse, divergent) {
-            const currTime = new Date();
+            const currTime = performance.now();
             const time = ((currTime - this.lastTime) / 1000).toFixed(2);
             this.clicks.push(
                 new ClickStats(groupN, number, time, err, inverse, divergent),
@@ -263,7 +263,7 @@ var appData = {
             );
         },
         endRound() {
-            const now = new Date();
+            const now = performance.now();
             this.rounds.push({
                 startTime: this.startTime,
                 stopTime: now,
@@ -483,7 +483,7 @@ var vueApp = new Vue({
                 'px';
         },
         breakBetweenRounds() {
-            this.stats.stopTime = new Date();
+            this.stats.stopTime = performance.now();
             this.stats.endRound();
             this.betweenRounds = true;
             this.stopMouseTracking();
@@ -498,7 +498,7 @@ var vueApp = new Vue({
         startNextRound() {
             this.initTable();
             this.killResultAnimations();
-            this.stats.startTime = new Date();
+            this.stats.startTime = performance.now();
             this.stats.lastTime = this.stats.startTime;
             this.hasClickedYet = false;
             this.betweenRounds = false;
@@ -550,7 +550,7 @@ var vueApp = new Vue({
             if (this.betweenRounds) return;
             if (this.gameStarted) {
                 if (this.startOnClick && !this.hasClickedYet) {
-                    this.stats.startTime = new Date();
+                    this.stats.startTime = performance.now();
                     this.hasClickedYet = true;
                 }
                 this.clickIndex = cellIdx;
@@ -963,7 +963,7 @@ var vueApp = new Vue({
         execDialog(tabName) {
             this.stopGame();
             this.changeDialogTab(tabName);
-            this.stats.stopTime = new Date();
+            this.stats.stopTime = performance.now();
             this.dialogShowed = true;
             this.stopMouseTracking();
         },
