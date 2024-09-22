@@ -119,6 +119,9 @@ function timeString(diff) {
 }
 
 var appData = {
+    maxGridSize: 30,
+    maxFrenzyCount: 6,
+
     gridSize: 5,
     gridRange: [],
     cells: [], // array of Cell
@@ -375,7 +378,7 @@ var vueApp = new Vue({
             this.initGame();
         },
         groupCount(val) {
-            this.groupCount = val
+            this.groupCount = val;
             this.initGame();
         },
         inverseCount() {
@@ -755,7 +758,7 @@ var vueApp = new Vue({
             this.currGroup = (this.currGroup + 1) % this.groupCount; // round it
         },
         groupRange(groupIdx) {
-            console.log(groupIdx)
+            console.log(groupIdx);
             if (groupIdx >= 0 && groupIdx < this.groups.length) {
                 if (this.groups[groupIdx].divergent) {
                     const h = Math.floor(this.groups[groupIdx].size / 2);

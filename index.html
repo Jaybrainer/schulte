@@ -138,7 +138,7 @@
                                     v-model="gridSize"
                                 >
                                     <option
-                                        v-for="i in Array.from({length: 29}, (_, i) => i + 2)"
+                                        v-for="i in Array.from({length: maxGridSize - 1}, (_, i) => i + 2)"
                                         :value="i"
                                     >
                                         {{i}} x {{i}}
@@ -515,12 +515,12 @@
                                         style="width: 30%"
                                         v-model="frenzyCount"
                                     >
-                                        <option value="1">1 (React)</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                        <option value="5">5</option>
-                                        <option value="6">6</option>
+                                        <option
+                                            v-for="i in Array.from({length: maxFrenzyCount}, (_, i) => i + 1)"
+                                            :value="i"
+                                        >
+                                            {{i}}{{i === 1 ? ' (React)' : ''}}
+                                        </option>
                                     </select>
                                 </p>
                                 <p>
