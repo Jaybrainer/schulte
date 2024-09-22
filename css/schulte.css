@@ -286,6 +286,7 @@ select::-ms-expand {
     font-size: 2em;
     left: 50%;
     transform: translateX(-50%);
+    user-select: none;
 }
 
 .spin-speed1 {
