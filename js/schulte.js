@@ -338,6 +338,9 @@ var vueApp = new Vue({
         }
     },
     watch: {
+        roundCount(val) { 
+            this.roundCount = parseInt(val);
+        },
         flashlightMode(val) {
             if (val === true) {
                 this.flashlightMode = true;

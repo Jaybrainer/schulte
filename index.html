@@ -29,7 +29,7 @@
         >
             <div
                 class="round-display"
-                v-if="gameStarted && showRounds && parseInt(roundCount) > 1"
+                v-if="gameStarted && showRounds && roundCount > 1"
             >
                 {{currentRoundNumber()}} / {{roundCount}}
             </div>
@@ -244,7 +244,7 @@
                                     class="w3-check"
                                     type="checkbox"
                                     v-model="roundBreaks"
-                                    :disabled="parseInt(roundCount) === 1"
+                                    :disabled="roundCount === 1"
                                 />
                                 <label class="w3-validate">Round Breaks</label>
                                 <br />
@@ -252,7 +252,7 @@
                                     class="w3-check"
                                     type="checkbox"
                                     v-model="showRounds"
-                                    :disabled="parseInt(roundCount) === 1"
+                                    :disabled="roundCount === 1"
                                 />
                                 <label class="w3-validate">Show Round</label>
                             </div>
@@ -617,11 +617,11 @@
                         </table>
                         <div
                             class="w3-row"
-                            v-if="stats.rounds.length === parseInt(roundCount)"
+                            v-if="stats.rounds.length === roundCount"
                         >
                             <div
                                 class="w3-row w3-col"
-                                :class="{'w3-half': parseInt(roundCount) > 1}"
+                                :class="{'w3-half': roundCount > 1}"
                                 style="
                                     margin-top: 5px;
                                     overflow-y: scroll;
@@ -630,7 +630,7 @@
                                 "
                             >
                                 <table
-                                    v-for="i in parseInt(roundCount)"
+                                    v-for="i in roundCount"
                                     class="w3-table-all w3-hoverable w3-centered"
                                 >
                                     <thead>
@@ -665,7 +665,7 @@
                             <div
                                 class="w3-row w3-col w3-half"
                                 style="margin-top: 5px"
-                                v-if="parseInt(roundCount) > 1 && !gameStarted"
+                                v-if="roundCount > 1 && !gameStarted"
                             >
                                 <canvas
                                     class="round-graph"
