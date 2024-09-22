@@ -13,6 +13,7 @@ class Cell {
             'rotate-270': false,
             'spin-right': false,
             'spin-left': false,
+            underline: false,
         };
         this.isReact = false;
         this.colorStyle = 'color: black';
@@ -457,8 +458,7 @@ var vueApp = new Vue({
             this.shuffleCells();
             this.updateSymbolTurns();
             this.updateSymbolSpins();
-            this.update69Underline();
-            this.updateColorStyles();
+            this.updateUnderlines();
         },
         startGame() {
             this.initGame();
@@ -1051,12 +1051,13 @@ var vueApp = new Vue({
                 }
             }
         },
-        update69Underline() {
-            if (!this.turnSymbols && !this.spinSymbols && !this.spinTable)
+        updateUnderlines() {
+            if (!(this.turnSymbols || this.spinSymbols || this.spinTable))
                 return;
-            const confusing = new Set([6, 9, 66, 99, 68, 98, 86, 89]);
+            const confusing = new Set('689');
             for (let i = 0; i < this.cells.length; i++) {
-                if (confusing.has(this.cells[i].number)) {
+                const digits = new Set(String(this.cells[i].number));
+                if (digits.isSubsetOf(confusing)) {
                     this.cells[i].cssClasses['underline'] = true;
                 }
             }
