@@ -180,14 +180,14 @@
                                     id="groups"
                                     class="w3-select w3-border w3-padding-small"
                                     style="width: 70%"
-                                    v-model="groupType"
+                                    v-model="groupCount"
                                 >
-                                    <option value="0">1 group</option>
-                                    <option value="1">1 group (colored)</option>
-                                    <option value="2">2 groups</option>
-                                    <option value="3">3 groups</option>
-                                    <option value="4">4 groups</option>
-                                    <option value="5">5 groups</option>
+                                    <option
+                                        v-for="i in Array.from({length: groupColorStyles.length}, (_, i) => i + 1)"
+                                        :value="i"
+                                    >
+                                        {{i}} group{{i > 1 ? 's' : ''}}
+                                    </option>
                                 </select>
                             </div>
                         </div>
@@ -267,38 +267,10 @@
                                 >
                                     <div
                                         class="color-num"
-                                        v-if="groupCount == 1"
-                                        v-html="groupRange(0)"
-                                    ></div>
-                                    <div
-                                        class="color-num"
-                                        :style="groupColorStyles[0]"
-                                        v-if="groupCount > 1"
-                                        v-html="groupRange(0)"
-                                    ></div>
-                                    <div
-                                        class="color-num"
-                                        :style="groupColorStyles[1]"
-                                        v-if="groupCount > 1"
-                                        v-html="groupRange(1)"
-                                    ></div>
-                                    <div
-                                        class="color-num"
-                                        :style="groupColorStyles[2]"
-                                        v-if="groupCount > 2"
-                                        v-html="groupRange(2)"
-                                    ></div>
-                                    <div
-                                        class="color-num"
-                                        :style="groupColorStyles[3]"
-                                        v-if="groupCount > 3"
-                                        v-html="groupRange(3)"
-                                    ></div>
-                                    <div
-                                        class="color-num"
-                                        :style="groupColorStyles[4]"
-                                        v-if="groupCount > 4"
-                                        v-html="groupRange(4)"
+                                        v-for="i in Array.from({length: groupCount}, (_, i) => i)"
+                                        v-if="groupCount > i"
+                                        v-html="groupRange(i)"
+                                        :style="groupColorStyles[i]"
                                     ></div>
                                     <br />
                                     <input

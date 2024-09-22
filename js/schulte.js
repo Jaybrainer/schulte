@@ -147,17 +147,25 @@ var appData = {
     timerMinutes: 5,
     frenzyCount: 3,
     currGroup: 0,
-    colorGroups: false,
-    groupType: 0,
     groups: [], // array of Group: setups in makeGridCells() method
 
-    groupColorStyles: [
+    newGroupColorStyles: [
+        'color: black',
+        'color: blue',
+        'color: green',
+        'color: #d90',
+        'color: red',
+        'color: magenta',
+    ],
+    oringinalGroupColorStyles: [
+        'color: black',
         'color: green',
         'color: red',
         'color: blue',
         'color: magenta',
         'color: brown',
     ],
+    groupColorStyles: [],
 
     gameStarted: false,
 
@@ -320,6 +328,7 @@ var vueApp = new Vue({
         this.initGame();
         this.clickSound = new Audio('js/bop.mp3');
         appData.personalBests = JSON.parse(localStorage.getItem(PB_KEY)) || {};
+        this.updateColorStyles();
     },
     mounted() {
         this.execDialog('settings');
@@ -365,17 +374,8 @@ var vueApp = new Vue({
 
             this.initGame();
         },
-        groupType(val) {
-            if (typeof val === 'string') {
-                val = parseInt(val);
-            }
-            if (val == 0) {
-                this.groupCount = 1;
-                this.colorGroups = false;
-            } else {
-                this.groupCount = val;
-                this.colorGroups = true;
-            }
+        groupCount(val) {
+            this.groupCount = val
             this.initGame();
         },
         inverseCount() {
@@ -755,6 +755,7 @@ var vueApp = new Vue({
             this.currGroup = (this.currGroup + 1) % this.groupCount; // round it
         },
         groupRange(groupIdx) {
+            console.log(groupIdx)
             if (groupIdx >= 0 && groupIdx < this.groups.length) {
                 if (this.groups[groupIdx].divergent) {
                     const h = Math.floor(this.groups[groupIdx].size / 2);
@@ -827,9 +828,7 @@ var vueApp = new Vue({
                     if (!isNaN(parseInt(this.nOffset))) {
                         cell.symbol = cell.number + parseInt(this.nOffset) + '';
                     }
-                    if (this.colorGroups) {
-                        cell.colorStyle = this.groupColorStyles[g];
-                    }
+                    cell.colorStyle = this.groupColorStyles[g];
                     if (this.leftRightClick) {
                         cell.rightClick = Math.random() > 0.5;
                     }
@@ -1064,21 +1063,9 @@ var vueApp = new Vue({
         },
         updateColorStyles() {
             if (this.originalColors) {
-                this.groupColorStyles = [
-                    'color: green',
-                    'color: red',
-                    'color: blue',
-                    'color: magenta',
-                    'color: brown',
-                ];
+                this.groupColorStyles = this.originalGroupColorStyles;
             } else {
-                this.groupColorStyles = [
-                    'color: blue',
-                    'color: green',
-                    'color: #d90',
-                    'color: red',
-                    'color: magenta',
-                ];
+                this.groupColorStyles = this.newGroupColorStyles;
             }
         },
         category() {
