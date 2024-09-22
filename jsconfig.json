@@ -3,14 +3,10 @@
         "module": "ESNext",
         "moduleResolution": "Bundler",
         "target": "ES2020",
-        "jsx": "react",
         "allowImportingTsExtensions": true,
         "checkJs": true,
         "strictNullChecks": true,
         "strictFunctionTypes": true
     },
-    "exclude": [
-        "node_modules",
-        "**/node_modules/*"
-    ]
+    "exclude": ["node_modules", "**/node_modules/*"]
 }

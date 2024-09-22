@@ -63,7 +63,7 @@
                     >
                         <span
                             :class="[cells[r*gridSize + c].cssClasses]"
-                            :style="cells[r*gridSize + c].colorStyle"
+                            :style="{color: cells[r*gridSize + c].colorStyle}"
                             :id="'cell.'+r+'.'+c"
                             style="cursor: default"
                         >
@@ -270,7 +270,7 @@
                                         v-for="i in Array.from({length: groupCount}, (_, i) => i)"
                                         v-if="groupCount > i"
                                         v-html="groupRange(i)"
-                                        :style="groupColorStyles[i]"
+                                        :style="{color: groupColorStyles[i]}"
                                     ></div>
                                     <br />
                                     <input

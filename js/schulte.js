@@ -16,7 +16,7 @@ class Cell {
             underline: false,
         };
         this.isReact = false;
-        this.colorStyle = 'color: black';
+        this.colorStyle = 'black';
     }
 }
 
@@ -152,21 +152,14 @@ var appData = {
     currGroup: 0,
     groups: [], // array of Group: setups in makeGridCells() method
 
-    newGroupColorStyles: [
-        'color: black',
-        'color: blue',
-        'color: green',
-        'color: #d90',
-        'color: red',
-        'color: magenta',
-    ],
+    newGroupColorStyles: ['black', 'blue', 'green', '#d90', 'red', 'magenta'],
     oringinalGroupColorStyles: [
-        'color: black',
-        'color: green',
-        'color: red',
-        'color: blue',
-        'color: magenta',
-        'color: brown',
+        'black',
+        'green',
+        'red',
+        'blue',
+        'magenta',
+        'brown',
     ],
     groupColorStyles: [],
 
