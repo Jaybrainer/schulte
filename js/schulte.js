@@ -751,7 +751,6 @@ var vueApp = new Vue({
             this.currGroup = (this.currGroup + 1) % this.groupCount; // round it
         },
         groupRange(groupIdx) {
-            console.log(groupIdx);
             if (groupIdx >= 0 && groupIdx < this.groups.length) {
                 if (this.groups[groupIdx].divergent) {
                     const h = Math.floor(this.groups[groupIdx].size / 2);
