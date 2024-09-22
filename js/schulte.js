@@ -332,6 +332,21 @@ var vueApp = new Vue({
         }
     },
     watch: {
+        flashlightMode(val) {
+            if (val === true) {
+                this.flashlightMode = true;
+            } else {
+                for (let i = 0; i < this.gridSize; i++) {
+                    for (let j = 0; j < this.gridSize; j++) {
+                        const elem = document.getElementById(
+                            'cell.' + i + '.' + j,
+                        );
+                        elem.style.opacity = 1;
+                    }
+                }
+                this.flashlightMode = false;
+            }
+        },
         gridSize(val) {
             if (typeof val === 'string') {
                 this.gridSize = parseInt(val); // recursion !!!
@@ -834,7 +849,8 @@ var vueApp = new Vue({
                     // code to compute next goal - taken from nextNum() and nextGroup()
                     let thisGroup = this.goalList[i][0],
                         thisNum = this.goalList[i][1];
-                    const isLast = this.groups[thisGroup].lastNumber() == thisNum;
+                    const isLast =
+                        this.groups[thisGroup].lastNumber() == thisNum;
                     groupNums[thisGroup] =
                         this.groups[thisGroup].nextNumber(thisNum);
                     if (isLast || this.collateGroups) {
@@ -869,7 +885,9 @@ var vueApp = new Vue({
             if (this.mathMode) {
                 // generate list of numbers
                 let numberList = [[0, '0']];
-                const integerMax = Math.floor((this.gridSize * this.gridSize) / 2);
+                const integerMax = Math.floor(
+                    (this.gridSize * this.gridSize) / 2,
+                );
                 for (let i = 1; i <= integerMax; i++) {
                     numberList.push([i, i + '']);
                     numberList.push([-i, '-' + i]);
@@ -1153,7 +1171,9 @@ var vueApp = new Vue({
                 const y = event.y;
                 for (let i = 0; i < this.gridSize; i++) {
                     for (let j = 0; j < this.gridSize; j++) {
-                        const elem = document.getElementById('cell.' + i + '.' + j);
+                        const elem = document.getElementById(
+                            'cell.' + i + '.' + j,
+                        );
                         const rect = elem.getBoundingClientRect();
                         const cellMidX = rect.x + rect.width / 2;
                         const cellMidY = rect.y + rect.height / 2;
