@@ -138,10 +138,10 @@
                                     v-model="gridSize"
                                 >
                                     <option
-                                        v-for="r in Array.from({length: 29}, (x,i) => (i+2))"
-                                        :value="r"
+                                        v-for="i in Array.from({length: 29}, (_, i) => i + 2)"
+                                        :value="i"
                                     >
-                                        {{r}} x {{r}}
+                                        {{i}} x {{i}}
                                     </option>
                                 </select>
                             </div>
@@ -630,7 +630,7 @@
                                 "
                             >
                                 <table
-                                    v-for="round in parseInt(roundCount)"
+                                    v-for="i in parseInt(roundCount)"
                                     class="w3-table-all w3-hoverable w3-centered"
                                 >
                                     <thead>
@@ -640,8 +640,8 @@
                                         >
                                             <th></th>
                                             <th>
-                                                Round {{round}} -
-                                                {{stats.roundTimeString(round)}}s
+                                                Round {{i}} -
+                                                {{stats.roundTimeString(i)}}s
                                             </th>
                                             <th></th>
                                         </tr>
@@ -653,7 +653,7 @@
                                         </tr>
                                     </thead>
                                     <tr
-                                        v-for="stat in stats.roundClicks(round)"
+                                        v-for="stat in stats.roundClicks(i)"
                                         :class="{'w3-text-red': stat.err}"
                                     >
                                         <td>{{stat.groupN + 1}}</td>
