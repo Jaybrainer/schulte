@@ -337,8 +337,10 @@ var vueApp = new Vue({
         this.initGame();
         this.clickSound = new Audio('js/bop.mp3');
         const temp = localStorage.getItem(PB_KEY);
-        console.log(temp)
-        appData.personalBests = JSON.parse(localStorage.getItem(PB_KEY) ?? "{}");
+        console.log(temp);
+        appData.personalBests = JSON.parse(
+            localStorage.getItem(PB_KEY) ?? '{}',
+        );
         this.updateColorStyles();
     },
     mounted() {
@@ -503,7 +505,7 @@ var vueApp = new Vue({
             this.betweenRounds = true;
             this.stopMouseTracking();
             for (let i = 0; i < this.cells.length; i++) {
-                this.cells[i].colorStyle = "transparent";
+                this.cells[i].colorStyle = 'transparent';
             }
         },
         killResultAnimations() {
@@ -588,130 +590,131 @@ var vueApp = new Vue({
             }
         },
         nextTurn() {
-            if (this.clickIndex >= 0 && this.clickIndex < this.cells.length) {
-                let correctClick = this.isCellCorrect(this.clickIndex);
-                if (this.leftRightClick) {
-                    if (
-                        (this.cells[this.clickIndex].rightClick &&
-                            this.lastClickButton != 2) ||
-                        (!this.cells[this.clickIndex].rightClick &&
-                            this.lastClickButton != 0)
-                    )
-                        correctClick = false;
+            // index out of range
+            if (this.clickIndex < 0 || this.clickIndex >= this.cells.length) {
+                return;
+            }
+
+            let correctClick = this.isCellCorrect(this.clickIndex);
+            if (this.leftRightClick) {
+                if (
+                    (this.cells[this.clickIndex].rightClick &&
+                        this.lastClickButton != 2) ||
+                    (!this.cells[this.clickIndex].rightClick &&
+                        this.lastClickButton != 0)
+                )
+                    correctClick = false;
+            }
+
+            if (correctClick) {
+                if (this.clickSound && this.useClickSound) {
+                    // play click sound and copy so they can overlap
+                    let newBoop = this.clickSound.cloneNode();
+                    newBoop.play();
+                    newBoop = null;
+                }
+                this.stats.correctClicks++;
+                this.stats.addClick(
+                    this.currGroup,
+                    this.cells[this.clickIndex].number,
+                    false,
+                    this.groups[this.currGroup].inverted,
+                    this.groups[this.currGroup].divergent,
+                );
+                this.cells[this.clickIndex].traced = true;
+                if (this.clearCorrect) {
+                    this.cells[this.clickIndex].colorStyle = 'transparent';
+                }
+                if (this.frenzyMode) {
+                    this.cells[this.clickIndex].colorStyle = 'transparent';
+                    if (this.frenzyCount == 1) {
+                        this.cells[this.clickIndex].isReact = false;
+                    }
+                    const nextGoal = Math.min(
+                        this.cells.length - 1,
+                        this.stats.correctClicks +
+                            parseInt(this.frenzyCount) -
+                            1,
+                    );
+                    for (let i = 0; i < this.cells.length; i++) {
+                        if (
+                            this.cells[i].group == this.goalList[nextGoal][0] &&
+                            this.cells[i].number == this.goalList[nextGoal][1]
+                        ) {
+                            if (!(this.frenzyCount == 1 && this.hideReact)) {
+                                this.cells[i].colorStyle =
+                                    this.groupColorStyles[this.cells[i].group];
+                            }
+                            if (this.frenzyCount == 1) {
+                                this.cells[i].isReact = true;
+                            }
+                        }
+                    }
+                }
+                if (this.blindMode) {
+                    if (this.stats.correctClicks == 1) {
+                        for (let i = 0; i < this.cells.length; i++) {
+                            this.cells[i].colorStyle = 'transparent';
+                        }
+                    }
+                }
+                if (this.shuffleSymbols) {
+                    this.shuffleCells();
+                    this.correctIndex = this.indexOfCorrectCell();
+                    this.clickIndex = this.correctIndex;
+                } else {
+                    this.correctIndex = this.clickIndex;
                 }
 
-                if (correctClick) {
-                    if (this.clickSound && this.useClickSound) {
-                        // play click sound and copy so they can overlap
-                        let newBoop = this.clickSound.cloneNode();
-                        newBoop.play();
-                        newBoop = null;
-                    }
-                    this.stats.correctClicks++;
-                    this.stats.addClick(
-                        this.currGroup,
-                        this.cells[this.clickIndex].number,
-                        false,
-                        this.groups[this.currGroup].inverted,
-                        this.groups[this.currGroup].divergent,
-                    );
-                    this.cells[this.clickIndex].traced = true;
-                    if (this.clearCorrect) {
-                        this.cells[this.clickIndex].colorStyle = "transparent";
-                    }
-                    if (this.frenzyMode) {
-                        this.cells[this.clickIndex].colorStyle = "transparent";
-                        if (this.frenzyCount == 1) {
-                            this.cells[this.clickIndex].isReact = false;
-                        }
-                        const nextGoal = Math.min(
-                            this.cells.length - 1,
-                            this.stats.correctClicks +
-                                parseInt(this.frenzyCount) -
-                                1,
-                        );
-                        for (let i = 0; i < this.cells.length; i++) {
-                            if (
-                                this.cells[i].group ==
-                                    this.goalList[nextGoal][0] &&
-                                this.cells[i].number ==
-                                    this.goalList[nextGoal][1]
-                            ) {
-                                if (
-                                    !(this.frenzyCount == 1 && this.hideReact)
-                                ) {
-                                    this.cells[i].colorStyle = this.groupColorStyles[this.cells[i].group];
-                                }
-                                if (this.frenzyCount == 1) {
-                                    this.cells[i].isReact = true;
-                                }
-                            }
-                        }
-                    }
-                    if (this.blindMode) {
-                        if (this.stats.correctClicks == 1) {
-                            for (let i = 0; i < this.cells.length; i++) {
-                                this.cells[i].colorStyle = "transparent";
-                            }
-                        }
-                    }
-                    if (this.shuffleSymbols) {
-                        this.shuffleCells();
-                        this.correctIndex = this.indexOfCorrectCell();
-                        this.clickIndex = this.correctIndex;
+                if (this.timerMode) {
+                    if (
+                        this.stats.correctClicks > 0 &&
+                        this.stats.correctClicks % this.cells.length === 0
+                    ) {
+                        this.initTable(); // jump to next table
                     } else {
-                        this.correctIndex = this.clickIndex;
-                    }
-
-                    if (this.timerMode) {
-                        if (
-                            this.stats.correctClicks > 0 &&
-                            this.stats.correctClicks % this.cells.length === 0
-                        ) {
-                            this.initTable(); // jump to next table
-                        } else {
-                            this.nextNum();
-                        }
-                    } else {
-                        if (this.stats.correctClicks === this.cells.length) {
-                            if (this.currentRoundNumber() >= this.roundCount) {
-                                this.stats.endRound();
-                                this.stopGame();
-                                this.updatePB();
-                                this.execDialog('stats');
-                            } else {
-                                this.breakBetweenRounds();
-                                if (!this.roundBreaks) {
-                                    this.startNextRound();
-                                }
-                            }
-                        } else {
-                            this.nextNum();
-                        }
+                        this.nextNum();
                     }
                 } else {
-                    if (this.noErrors) {
-                        return this.execDialog('settings');
+                    if (this.stats.correctClicks === this.cells.length) {
+                        if (this.currentRoundNumber() >= this.roundCount) {
+                            this.stats.endRound();
+                            this.stopGame();
+                            this.updatePB();
+                            this.execDialog('stats');
+                        } else {
+                            this.breakBetweenRounds();
+                            if (!this.roundBreaks) {
+                                this.startNextRound();
+                            }
+                        }
+                    } else {
+                        this.nextNum();
                     }
-                    if (
-                        this.blindMode &&
-                        this.stats.correctClicks >= 1 &&
-                        !this.cells[this.clickIndex].traced
-                    ) {
-                        // unclear this cell, but add 10 seconds
-                        this.cells[this.clickIndex].colorStyle = this.groupColorStyles[this.clickIndex];
-                        this.stats.startTime -= 10000;
-                    }
-                    this.stats.wrongClicks++;
-                    this.stats.addClick(
-                        this.currGroup,
-                        this.cells[this.clickIndex].number,
-                        true,
-                        this.groups[this.currGroup].inverted,
-                        this.groups[this.currGroup].divergent,
-                    );
-                    this.correctIndex = -1;
                 }
+            } else {
+                if (this.noErrors) {
+                    return this.execDialog('settings');
+                }
+                if (
+                    this.blindMode &&
+                    this.stats.correctClicks >= 1 &&
+                    !this.cells[this.clickIndex].traced
+                ) {
+                    // unclear this cell, but add 10 seconds
+                    this.cells[this.clickIndex].colorStyle =
+                        this.groupColorStyles[this.clickIndex];
+                    this.stats.startTime -= 10000;
+                }
+                this.stats.wrongClicks++;
+                this.stats.addClick(
+                    this.currGroup,
+                    this.cells[this.clickIndex].number,
+                    true,
+                    this.groups[this.currGroup].inverted,
+                    this.groups[this.currGroup].divergent,
+                );
+                this.correctIndex = -1;
             }
         },
         isCellCorrect(cellIdx) {
@@ -826,7 +829,9 @@ var vueApp = new Vue({
                     let cell = new Cell(i);
                     cell.group = g;
                     if (!isNaN(parseInt(this.nOffset))) {
-                        cell.symbol = String(cell.number + parseInt(this.nOffset));
+                        cell.symbol = String(
+                            cell.number + parseInt(this.nOffset),
+                        );
                     }
                     cell.colorStyle = this.groupColorStyles[g];
                     if (this.leftRightClick) {
@@ -860,7 +865,7 @@ var vueApp = new Vue({
 
                 // hide all cells
                 for (let i = 0; i < cellCount; i++) {
-                    this.cells[i].colorStyle = "transparent"
+                    this.cells[i].colorStyle = 'transparent';
                 }
 
                 // unhide cells which should be shown
@@ -871,7 +876,8 @@ var vueApp = new Vue({
                             this.cells[g].number == this.goalList[i][1]
                         ) {
                             if (!(this.frenzyCount == 1 && this.hideReact)) {
-                                this.cells[i].colorStyle = this.groupColorStyles[this.cells[i].group];
+                                this.cells[i].colorStyle =
+                                    this.groupColorStyles[this.cells[i].group];
                             }
                             if (this.frenzyCount == 1) {
                                 this.cells[g].isReact = true;
@@ -930,7 +936,9 @@ var vueApp = new Vue({
 
                 // set cells' symbols to those values
                 for (let i = 0; i < cellCount; i++) {
-                    this.cells[i].symbol = String(numberList[this.cells[i].number - 1][1]);
+                    this.cells[i].symbol = String(
+                        numberList[this.cells[i].number - 1][1],
+                    );
                 }
             } else if (this.lettersMode) {
                 // set cells' symbols to those values
@@ -1185,181 +1193,188 @@ var vueApp = new Vue({
             }
         },
         appendMouseClick(event) {
-            if (this.mouseTracking) {
-                const shiftX = (window.innerWidth - this.tableWidth) / 2;
-                const shiftY = (window.innerHeight - this.tableHeight) / 2;
-                const nx = (event.clientX - shiftX) / this.tableWidth; // normalize in range [0, 1]
-                const ny = (event.clientY - shiftY) / this.tableHeight; // normalize in range [0, 1]
-                this.mouseClicks.push(
-                    new Click(nx, ny, this.isCellCorrect(this.clickIndex)),
-                );
+            if (!this.mouseTracking) {
+                return;
             }
+            const shiftX = (window.innerWidth - this.tableWidth) / 2;
+            const shiftY = (window.innerHeight - this.tableHeight) / 2;
+            const nx = (event.clientX - shiftX) / this.tableWidth; // normalize in range [0, 1]
+            const ny = (event.clientY - shiftY) / this.tableHeight; // normalize in range [0, 1]
+            this.mouseClicks.push(
+                new Click(nx, ny, this.isCellCorrect(this.clickIndex)),
+            );
         },
         drawRoundGraph() {
             const canvas = this.$refs['roundGraphCanvas'];
-            if (canvas) {
-                const ctx = canvas.getContext('2d');
-                ctx.imageSmoothingEnabled = false;
-                const { width, height } = canvas;
+            if (!canvas) {
+                return;
+            }
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+            const { width, height } = canvas;
 
-                const roundTimes = this.stats.rounds.map((r) => r.duration);
-                const rounds = roundTimes.length;
-                const min = roundTimes.reduce((r, t) => Math.min(r, t));
-                const tMin = 50 * (Math.floor(min / 50) - 1);
-                const max = roundTimes.reduce((r, t) => Math.max(r, t));
-                const tMax = 50 * (Math.ceil(max / 50) + 1);
-                const tAvg = roundTimes.reduce((a, b) => a + b) / rounds;
+            const roundTimes = this.stats.rounds.map((r) => r.duration);
+            const rounds = roundTimes.length;
+            const min = roundTimes.reduce((r, t) => Math.min(r, t));
+            const tMin = 50 * (Math.floor(min / 50) - 1);
+            const max = roundTimes.reduce((r, t) => Math.max(r, t));
+            const tMax = 50 * (Math.ceil(max / 50) + 1);
+            const tAvg = roundTimes.reduce((a, b) => a + b) / rounds;
 
-                const x0 = 20 + Math.max(Math.floor(Math.log10(tMax) * 4), 4);
-                const y0 = 10;
-                const gWidth = width - x0;
-                const gHeight = height - y0 * 2;
-                ctx.clearRect(0, 0, width, height);
+            const x0 = 20 + Math.max(Math.floor(Math.log10(tMax) * 4), 4);
+            const y0 = 10;
+            const gWidth = width - x0;
+            const gHeight = height - y0 * 2;
+            ctx.clearRect(0, 0, width, height);
 
-                // axes
-                ctx.lineWidth = 2;
-                ctx.strokeStyle = 'black';
-                ctx.beginPath();
-                ctx.moveTo(x0, y0);
-                ctx.lineTo(x0, y0 + gHeight);
-                ctx.lineTo(x0 + gWidth, y0 + gHeight);
-                ctx.stroke();
+            // axes
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = 'black';
+            ctx.beginPath();
+            ctx.moveTo(x0, y0);
+            ctx.lineTo(x0, y0 + gHeight);
+            ctx.lineTo(x0 + gWidth, y0 + gHeight);
+            ctx.stroke();
 
-                // vertical axis labels
-                const tLabels = 5;
-                const tMinY = y0 + gHeight - 6;
-                const tMaxY = y0 + 6;
-                const dt = (tMax - tMin) / (tLabels - 1);
-                const dy = (tMaxY - tMinY) / (tLabels - 1);
+            // vertical axis labels
+            const tLabels = 5;
+            const tMinY = y0 + gHeight - 6;
+            const tMaxY = y0 + 6;
+            const dt = (tMax - tMin) / (tLabels - 1);
+            const dy = (tMaxY - tMinY) / (tLabels - 1);
 
-                ctx.textBaseline = 'middle';
-                ctx.textAlign = 'end';
-                for (let i = 0; i < tLabels; i++) {
-                    let text = (Math.floor(tMin + i * dt) / 1000).toString();
-                    text = text.includes('.') ? text : text + '.';
-                    const trailingZeros = Math.max(
-                        0,
-                        3 - (text.length - 1 - text.indexOf('.')),
-                    );
-                    text = text + '0'.repeat(trailingZeros);
-                    ctx.fillText(text, x0 - 4, tMinY + i * dy);
-                }
+            ctx.textBaseline = 'middle';
+            ctx.textAlign = 'end';
+            for (let i = 0; i < tLabels; i++) {
+                let text = (Math.floor(tMin + i * dt) / 1000).toString();
+                text = text.includes('.') ? text : text + '.';
+                const trailingZeros = Math.max(
+                    0,
+                    3 - (text.length - 1 - text.indexOf('.')),
+                );
+                text = text + '0'.repeat(trailingZeros);
+                ctx.fillText(text, x0 - 4, tMinY + i * dy);
+            }
 
-                const yForT = (t) =>
-                    4 +
-                    gHeight -
-                    ((t - tMin) / (tMax - tMin)) * (tMinY - tMaxY);
+            const yForT = (t) =>
+                4 + gHeight - ((t - tMin) / (tMax - tMin)) * (tMinY - tMaxY);
 
-                // average line
-                const tAvgY = yForT(tAvg);
-                ctx.lineWidth = 3;
-                ctx.strokeStyle = 'rgba(200, 200, 200, 0.5)';
-                ctx.setLineDash([10, 10]);
-                ctx.beginPath();
-                ctx.moveTo(x0, tAvgY);
-                ctx.lineTo(x0 + gWidth, tAvgY);
-                ctx.stroke();
+            // average line
+            const tAvgY = yForT(tAvg);
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = 'rgba(200, 200, 200, 0.5)';
+            ctx.setLineDash([10, 10]);
+            ctx.beginPath();
+            ctx.moveTo(x0, tAvgY);
+            ctx.lineTo(x0 + gWidth, tAvgY);
+            ctx.stroke();
 
-                // graph lines
-                const px0 = x0 + 10;
-                const dx = (gWidth - 20) / (rounds - 1);
-                const points = [];
-                ctx.setLineDash([0, 0]);
-                ctx.beginPath();
-                ctx.lineWidth = 2;
-                ctx.strokeStyle = 'blue';
-                ctx.fillStyle = 'blue';
-                roundTimes.forEach((time, i) => {
-                    const x = px0 + i * dx;
-                    const y = yForT(time);
-                    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-                    points.push([x, y]);
+            // graph lines
+            const px0 = x0 + 10;
+            const dx = (gWidth - 20) / (rounds - 1);
+            const points = [];
+            ctx.setLineDash([0, 0]);
+            ctx.beginPath();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = 'blue';
+            ctx.fillStyle = 'blue';
+            roundTimes.forEach((time, i) => {
+                const x = px0 + i * dx;
+                const y = yForT(time);
+                i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+                points.push([x, y]);
+            });
+            ctx.stroke();
+
+            // graph points
+            if (points.length <= 50) {
+                const r = rounds <= 10 ? 4 : 2;
+                points.forEach(([x, y]) => {
+                    ctx.beginPath();
+                    ctx.arc(x, y, r, 0, 2 * Math.PI);
+                    ctx.stroke();
+                    ctx.fill();
                 });
-                ctx.stroke();
-
-                // graph points
-                if (points.length <= 50) {
-                    const r = rounds <= 10 ? 4 : 2;
-                    points.forEach(([x, y]) => {
-                        ctx.beginPath();
-                        ctx.arc(x, y, r, 0, 2 * Math.PI);
-                        ctx.stroke();
-                        ctx.fill();
-                    });
-                }
             }
         },
         drawMousemap() {
             const canvas = this.$refs['mousemap_canvas']; // if mousemapTab visible
-            if (canvas) {
-                const ctx = canvas.getContext('2d');
-                if (ctx) {
-                    // clear canvas
-                    const W = canvas.width;
-                    const H = canvas.height;
-                    ctx.fillStyle = 'white';
-                    ctx.clearRect(0, 0, W, H);
+            if (!canvas) {
+                return;
+            }
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+                // clear canvas
+                const W = canvas.width;
+                const H = canvas.height;
+                ctx.fillStyle = 'white';
+                ctx.clearRect(0, 0, W, H);
 
-                    this.drawMousemapGrid(ctx, W, H);
-                    this.drawMousemapMoves(ctx, W, H);
-                    this.drawMousemapClicks(ctx, W, H);
-                }
+                this.drawMousemapGrid(ctx, W, H);
+                this.drawMousemapMoves(ctx, W, H);
+                this.drawMousemapClicks(ctx, W, H);
             }
         },
         drawMousemapGrid(ctx, W, H) {
-            if (ctx && this.gridSize > 0) {
-                const rowH = H / this.gridSize;
-                const colW = W / this.gridSize;
-                ctx.strokeStyle = '#ccc';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                for (let i = 1; i < this.gridSize; i++) {
-                    ctx.moveTo(i * colW, 0);
-                    ctx.lineTo(i * colW, H);
-                    ctx.moveTo(0, i * rowH);
-                    ctx.lineTo(W, i * rowH);
-                }
-                ctx.stroke();
-                ctx.closePath();
+            if (!ctx || this.gridSize < 1) {
+                return;
             }
+
+            const rowH = H / this.gridSize;
+            const colW = W / this.gridSize;
+            ctx.strokeStyle = '#ccc';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for (let i = 1; i < this.gridSize; i++) {
+                ctx.moveTo(i * colW, 0);
+                ctx.lineTo(i * colW, H);
+                ctx.moveTo(0, i * rowH);
+                ctx.lineTo(W, i * rowH);
+            }
+            ctx.stroke();
+            ctx.closePath();
         },
         drawMousemapMoves(ctx, W, H) {
-            if (ctx) {
-                ctx.beginPath();
-                ctx.strokeStyle = '#1f6ef7'; //'#f78383';
-                ctx.lineWidth = 2;
-                for (let i = 0; i + 1 < this.mouseMoves.length; i++) {
-                    const x0 = this.mouseMoves[i].x * W;
-                    const y0 = this.mouseMoves[i].y * H;
-                    const x1 = this.mouseMoves[i + 1].x * W;
-                    const y1 = this.mouseMoves[i + 1].y * H;
-                    ctx.moveTo(x0, y0);
-                    ctx.lineTo(x1, y1);
-                }
-                ctx.stroke();
-                ctx.closePath();
+            if (!ctx) {
+                return;
             }
+
+            ctx.beginPath();
+            ctx.strokeStyle = '#1f6ef7'; //'#f78383';
+            ctx.lineWidth = 2;
+            for (let i = 0; i + 1 < this.mouseMoves.length; i++) {
+                const x0 = this.mouseMoves[i].x * W;
+                const y0 = this.mouseMoves[i].y * H;
+                const x1 = this.mouseMoves[i + 1].x * W;
+                const y1 = this.mouseMoves[i + 1].y * H;
+                ctx.moveTo(x0, y0);
+                ctx.lineTo(x1, y1);
+            }
+            ctx.stroke();
+            ctx.closePath();
         },
         drawMousemapClicks(ctx, W, H) {
-            if (ctx) {
-                ctx.lineWidth = 2;
-                const radius = 5;
-                for (let i = 0; i < this.mouseClicks.length; i++) {
-                    const centerX = this.mouseClicks[i].x * W;
-                    const centerY = this.mouseClicks[i].y * H;
-                    ctx.beginPath();
-                    if (this.mouseClicks[i].correct) {
-                        ctx.fillStyle = '#52a352'; //'#6ac46a';
-                        ctx.strokeStyle = '#52a352';
-                    } else {
-                        ctx.fillStyle = '#ba2a29'; //'#f44f4d';
-                        ctx.strokeStyle = '#ba2a29';
-                    }
-                    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
-                    ctx.fill();
-                    ctx.stroke();
-                    ctx.closePath();
+            if (!ctx) {
+                return;
+            }
+
+            ctx.lineWidth = 2;
+            const radius = 5;
+            for (let i = 0; i < this.mouseClicks.length; i++) {
+                const centerX = this.mouseClicks[i].x * W;
+                const centerY = this.mouseClicks[i].y * H;
+                ctx.beginPath();
+                if (this.mouseClicks[i].correct) {
+                    ctx.fillStyle = '#52a352'; //'#6ac46a';
+                    ctx.strokeStyle = '#52a352';
+                } else {
+                    ctx.fillStyle = '#ba2a29'; //'#f44f4d';
+                    ctx.strokeStyle = '#ba2a29';
                 }
+                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+                ctx.fill();
+                ctx.stroke();
+                ctx.closePath();
             }
         },
     },
