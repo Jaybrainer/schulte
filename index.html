@@ -159,13 +159,7 @@
                                     style="width: 80%"
                                     v-model="roundCount"
                                 >
-                                    <option value="1">1 round</option>
-                                    <option value="2">2 rounds</option>
-                                    <option value="3">3 rounds</option>
-                                    <option value="5">5 rounds</option>
-                                    <option value="10">10 rounds</option>
-                                    <option value="25">25 rounds</option>
-                                    <option value="100">100 rounds</option>
+                                    <option v-for="i in roundOptions" :value="i">{{i}} round{{i > 1 ? 's' : ''}}</option>
                                 </select>
                             </div>
 

@@ -131,6 +131,7 @@ var appData = {
     showRounds: true,
     showTransitions: true,
     betweenRounds: false,
+    roundOptions: [1, 2, 3, 5, 10, 25, 100],
 
     personalBests: {},
 
