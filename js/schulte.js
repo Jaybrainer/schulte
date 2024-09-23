@@ -92,13 +92,27 @@ class Click {
 }
 
 class ClickStats {
-    constructor(groupN, number, time, err, inverse, divergent) {
+    constructor({ groupN, number, time, err, inverse, divergent }) {
         this.groupN = groupN;
         this.number = number;
         this.time = time;
         this.err = err;
         this.inverse = inverse;
         this.divergent = divergent;
+    }
+}
+
+class RoundStats {
+    constructor({ startTime, stopTime, clicks, correctClicks, wrongClicks }) {
+        this.startTime = startTime;
+        this.stopTime = stopTime;
+        this.clicks = clicks;
+        this.correctClicks = correctClicks;
+        this.wrongClicks = wrongClicks;
+    }
+
+    get duration() {
+        return this.stopTime - this.startTime;
     }
 }
 
@@ -194,8 +208,10 @@ var appData = {
     nOffset: 0,
 
     mouseTracking: false,
-    mouseMoves: [], // array of Point
-    mouseClicks: [], // array of Click
+    /** @type {Point[]} */
+    mouseMoves: [],
+    /** @type {Click[]} */
+    mouseClicks: [],
 
     rowHeight: '20%',
     colWidth: '20%',
@@ -213,33 +229,43 @@ var appData = {
     clickSound: false,
 
     stats: {
-        startTime: performance.now(),
-        stopTime: performance.now(),
-        lastTime: performance.now(),
+        startTime: 0,
+        stopTime: 0,
+        lastTime: 0,
         correctClicks: 0,
         wrongClicks: 0,
-        clicks: [], // array of ClickStats
+        /** @type {ClickStats[]} */
+        clicks: [],
+        /** @type {RoundStats[]} */
         rounds: [],
-        clear() {
-            this.startTime = performance.now();
-            this.stopTime = performance.now();
-            this.lastTime = performance.now();
+        startRound() {
+            const now = performance.now();
+            this.startTime = now;
+            this.stopTime = now;
+            this.lastTime = now;
             this.correctClicks = 0;
             this.wrongClicks = 0;
             this.clicks = [];
             this.rounds = [];
         },
         addClick(groupN, number, err, inverse, divergent) {
-            const currTime = performance.now();
-            const time = ((currTime - this.lastTime) / 1000).toFixed(2);
+            const now = performance.now();
+            const time = ((now - this.lastTime) / 1000).toFixed(2);
             this.clicks.push(
-                new ClickStats(groupN, number, time, err, inverse, divergent),
+                new ClickStats({
+                    groupN,
+                    number,
+                    time,
+                    err,
+                    inverse,
+                    divergent,
+                }),
             );
-            this.lastTime = currTime;
+            this.lastTime = now;
         },
         resultTimeString() {
             const rounds = this.rounds.length;
-            if (rounds < appData.rounds) return timeString(0);
+            if (rounds < appData.roundCount) return timeString(0);
             const total = this.totalTime();
             const time = timeString(total);
 
@@ -253,55 +279,41 @@ var appData = {
         },
         totalCorrectClicks() {
             return (
-                this.correctClicks +
-                this.rounds.reduce((a, r) => a + r.correctClicks, 0)
+                this.correctClicks + // in the case of an unfinished round
+                this.rounds.reduce((a, b) => a + b.correctClicks, 0)
             );
         },
         totalWrongClicks() {
             return (
-                this.wrongClicks +
-                this.rounds.reduce((a, r) => a + r.wrongClicks, 0)
+                this.wrongClicks + // in the case of an unfinished round
+                this.rounds.reduce((a, b) => a + b.wrongClicks, 0)
             );
         },
         endRound() {
             const now = performance.now();
-            this.rounds.push({
-                startTime: this.startTime,
-                stopTime: now,
-                clicks: this.clicks,
-                correctClicks: this.correctClicks,
-                wrongClicks: this.wrongClicks,
-            });
+            this.rounds.push(
+                new RoundStats({
+                    startTime: this.startTime,
+                    stopTime: now,
+                    clicks: this.clicks,
+                    correctClicks: this.correctClicks,
+                    wrongClicks: this.wrongClicks,
+                }),
+            );
             this.startTime = now;
             this.lastTime = now;
             this.clicks = [];
             this.correctClicks = 0;
             this.wrongClicks = 0;
         },
-        roundTime(round) {
-            const stat = this.rounds[round - 1];
-            return stat ? stat.stopTime - stat.startTime : 0;
-        },
-        roundClicks(round) {
-            const stat = this.rounds[round - 1];
-            return stat ? stat.clicks : [];
-        },
         bestRoundTime() {
-            let result = Infinity;
-            for (const round of this.rounds) {
-                result = Math.min(result, round.stopTime - round.startTime);
-            }
-            return result;
-        },
-        roundTimeString(round) {
-            return timeString(this.roundTime(round));
+            return this.rounds.reduce(
+                (a, b) => Math.min(a, b.duration),
+                Infinity,
+            );
         },
         totalTime() {
-            let result = 0;
-            for (let i = 1; i <= this.rounds.length; i++) {
-                result += this.roundTime(i);
-            }
-            return result;
+            return this.rounds.reduce((a, b) => a + b.duration, 0);
         },
     },
 };
@@ -339,7 +351,7 @@ var vueApp = new Vue({
         }
     },
     watch: {
-        roundCount(val) { 
+        roundCount(val) {
             this.roundCount = parseInt(val);
         },
         flashlightMode(val) {
@@ -444,7 +456,7 @@ var vueApp = new Vue({
         initGame() {
             this.gameStarted = false;
             this.initTable();
-            this.stats.clear();
+            this.stats.startRound();
             this.mouseMoves.length = 0;
             this.mouseClicks.length = 0;
             this.mouseTracking = false;
@@ -1194,9 +1206,7 @@ var vueApp = new Vue({
                 ctx.imageSmoothingEnabled = false;
                 const { width, height } = canvas;
 
-                const roundTimes = this.stats.rounds.map(
-                    (r) => r.stopTime - r.startTime,
-                );
+                const roundTimes = this.stats.rounds.map((r) => r.duration);
                 const rounds = roundTimes.length;
                 const min = roundTimes.reduce((r, t) => Math.min(r, t));
                 const tMin = 50 * (Math.floor(min / 50) - 1);

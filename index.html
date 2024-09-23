@@ -159,7 +159,12 @@
                                     style="width: 80%"
                                     v-model="roundCount"
                                 >
-                                    <option v-for="i in roundOptions" :value="i">{{i}} round{{i > 1 ? 's' : ''}}</option>
+                                    <option
+                                        v-for="i in roundOptions"
+                                        :value="i"
+                                    >
+                                        {{i}} round{{i > 1 ? 's' : ''}}
+                                    </option>
                                 </select>
                             </div>
 
@@ -624,7 +629,7 @@
                                 "
                             >
                                 <table
-                                    v-for="i in roundCount"
+                                    v-for="i in Array.from({length: roundCount}, (_, i) => i)"
                                     class="w3-table-all w3-hoverable w3-centered"
                                 >
                                     <thead>
@@ -634,8 +639,8 @@
                                         >
                                             <th></th>
                                             <th>
-                                                Round {{i}} -
-                                                {{stats.roundTimeString(i)}}s
+                                                Round {{i + 1}} -
+                                                {{timeString(stats.rounds[i].duration)}}s
                                             </th>
                                             <th></th>
                                         </tr>
@@ -647,11 +652,15 @@
                                         </tr>
                                     </thead>
                                     <tr
-                                        v-for="stat in stats.roundClicks(i)"
+                                        v-for="stat in stats.rounds[i].clicks"
                                         :class="{'w3-pale-red': stat.err}"
                                     >
-                                        <td :style="{color: groupColorStyles[stat.groupN]}">{{stat.groupN + 1}}</td>
-                                        <td>{{stat.number}}</td>    
+                                        <td
+                                            :style="{color: groupColorStyles[stat.groupN]}"
+                                        >
+                                            {{stat.groupN + 1}}
+                                        </td>
+                                        <td>{{stat.number}}</td>
                                         <td>{{stat.time}}s</td>
                                     </tr>
                                 </table>
