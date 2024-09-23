@@ -3,7 +3,7 @@ const PB_KEY = 'schulte-pbs';
 class Cell {
     constructor(number) {
         this.number = number;
-        this.symbol = number;
+        this.symbol = String(number);
         this.group = 0;
         this.traced = false;
         this.rightClick = false;
@@ -503,7 +503,7 @@ var vueApp = new Vue({
             this.betweenRounds = true;
             this.stopMouseTracking();
             for (let i = 0; i < this.cells.length; i++) {
-                this.cells[i].symbol = '';
+                this.cells[i].colorStyle = "transparent";
             }
         },
         killResultAnimations() {
@@ -617,10 +617,10 @@ var vueApp = new Vue({
                     );
                     this.cells[this.clickIndex].traced = true;
                     if (this.clearCorrect) {
-                        this.cells[this.clickIndex].symbol = '';
+                        this.cells[this.clickIndex].colorStyle = "transparent";
                     }
                     if (this.frenzyMode) {
-                        this.cells[this.clickIndex].symbol = '';
+                        this.cells[this.clickIndex].colorStyle = "transparent";
                         if (this.frenzyCount == 1) {
                             this.cells[this.clickIndex].isReact = false;
                         }
@@ -640,8 +640,7 @@ var vueApp = new Vue({
                                 if (
                                     !(this.frenzyCount == 1 && this.hideReact)
                                 ) {
-                                    this.cells[i].symbol =
-                                        '' + this.cells[i].number;
+                                    this.cells[i].colorStyle = this.groupColorStyles[this.cells[i].group];
                                 }
                                 if (this.frenzyCount == 1) {
                                     this.cells[i].isReact = true;
@@ -652,9 +651,7 @@ var vueApp = new Vue({
                     if (this.blindMode) {
                         if (this.stats.correctClicks == 1) {
                             for (let i = 0; i < this.cells.length; i++) {
-                                this.cells[i].blindSymbol =
-                                    this.cells[i].symbol;
-                                this.cells[i].symbol = '';
+                                this.cells[i].colorStyle = "transparent";
                             }
                         }
                     }
@@ -702,8 +699,7 @@ var vueApp = new Vue({
                         !this.cells[this.clickIndex].traced
                     ) {
                         // unclear this cell, but add 10 seconds
-                        this.cells[this.clickIndex].symbol =
-                            this.cells[this.clickIndex].blindSymbol + '';
+                        this.cells[this.clickIndex].colorStyle = this.groupColorStyles[this.clickIndex];
                         this.stats.startTime -= 10000;
                     }
                     this.stats.wrongClicks++;
@@ -830,7 +826,7 @@ var vueApp = new Vue({
                     let cell = new Cell(i);
                     cell.group = g;
                     if (!isNaN(parseInt(this.nOffset))) {
-                        cell.symbol = cell.number + parseInt(this.nOffset) + '';
+                        cell.symbol = String(cell.number + parseInt(this.nOffset));
                     }
                     cell.colorStyle = this.groupColorStyles[g];
                     if (this.leftRightClick) {
@@ -862,12 +858,12 @@ var vueApp = new Vue({
                     this.goalList.push([thisGroup, groupNums[thisGroup]]);
                 }
 
-                // clear symbols
+                // hide all cells
                 for (let i = 0; i < cellCount; i++) {
-                    this.cells[i].symbol = '';
+                    this.cells[i].colorStyle = "transparent"
                 }
 
-                // set first few symbols
+                // unhide cells which should be shown
                 for (let i = 0; i < this.frenzyCount; i++) {
                     for (let g = 0; g < cellCount; g++) {
                         if (
@@ -875,8 +871,7 @@ var vueApp = new Vue({
                             this.cells[g].number == this.goalList[i][1]
                         ) {
                             if (!(this.frenzyCount == 1 && this.hideReact)) {
-                                this.cells[g].symbol =
-                                    '' + this.cells[g].number;
+                                this.cells[i].colorStyle = this.groupColorStyles[this.cells[i].group];
                             }
                             if (this.frenzyCount == 1) {
                                 this.cells[g].isReact = true;
@@ -935,8 +930,7 @@ var vueApp = new Vue({
 
                 // set cells' symbols to those values
                 for (let i = 0; i < cellCount; i++) {
-                    this.cells[i].symbol =
-                        numberList[this.cells[i].number - 1][1];
+                    this.cells[i].symbol = String(numberList[this.cells[i].number - 1][1]);
                 }
             } else if (this.lettersMode) {
                 // set cells' symbols to those values
