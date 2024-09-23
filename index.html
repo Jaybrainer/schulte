@@ -36,7 +36,7 @@
             <div
                 class="schulte"
                 :class="[spinTable ? gameStarted && ('spin-' + spinTableSpeed) : '']"
-                :style="{ width: tableWidth, height: tableHeight }"
+                :style="{ width: `${tableWidth}px`, height: `${tableHeight}px` }"
             >
                 <div
                     v-for="r in gridRange"
@@ -683,8 +683,8 @@
                     >
                         <canvas
                             class="mouse-map"
-                            width="300"
-                            height="300"
+                            width="600"
+                            height="600"
                             ref="mousemap_canvas"
                         >
                         </canvas>

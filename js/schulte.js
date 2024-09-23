@@ -198,8 +198,8 @@ var appData = {
 
     rowHeight: '20%',
     colWidth: '20%',
-    tableWidth: 'calc(100vw - 100px)',
-    tableHeight: 'calc(100vh - 100px)',
+    tableWidth: 600,
+    tableHeight: 600,
     cellFontSize: 'calc(8vmin - 8px)',
     selectTimeOut: 500,
     selectedTimerId: -1,
@@ -474,8 +474,8 @@ var vueApp = new Vue({
         setTableMargin(margin) {
             document.getElementsByTagName('body')[0].style.margin =
                 `${margin}px`;
-            this.tableWidth = parseInt(this.tableSize) + 'px';
-            this.tableHeight = parseInt(this.tableSize) + 'px';
+            this.tableWidth = this.tableSize;
+            this.tableHeight = this.tableSize;
             this.cellFontSize =
                 (parseInt(this.tableSize) * this.fontSize) /
                     this.gridSize /
@@ -567,16 +567,7 @@ var vueApp = new Vue({
                     this.showClickAnimation = false;
                 }
 
-                // append mouseClick
-                if (this.mouseTracking) {
-                    const shiftX = (window.innerWidth - this.tableWidth) / 2;
-                    const shiftY = (window.innerHeight - this.tableHeight) / 2;
-                    const nx = event.clientX - shiftX;
-                    const ny = event.clientY - shiftY;
-                    this.mouseClicks.push(
-                        new Click(nx, ny, this.isCellCorrect(this.clickIndex)),
-                    );
-                }
+                this.appendMouseClick(event);
 
                 this.nextTurn();
             }
@@ -1179,9 +1170,20 @@ var vueApp = new Vue({
             if (this.mouseTracking) {
                 const shiftX = (window.innerWidth - this.tableWidth) / 2;
                 const shiftY = (window.innerHeight - this.tableHeight) / 2;
-                const nx = event.clientX - shiftX;
-                const ny = event.clientY - shiftY;
+                const nx = (event.clientX - shiftX) / this.tableWidth; // normalize in range [0, 1]
+                const ny = (event.clientY - shiftY) / this.tableHeight; // normalize in range [0, 1]
                 this.mouseMoves.push(new Point(nx, ny));
+            }
+        },
+        appendMouseClick(event) {
+            if (this.mouseTracking) {
+                const shiftX = (window.innerWidth - this.tableWidth) / 2;
+                const shiftY = (window.innerHeight - this.tableHeight) / 2;
+                const nx = (event.clientX - shiftX) / this.tableWidth; // normalize in range [0, 1]
+                const ny = (event.clientY - shiftY) / this.tableHeight; // normalize in range [0, 1]
+                this.mouseClicks.push(
+                    new Click(nx, ny, this.isCellCorrect(this.clickIndex)),
+                );
             }
         },
         drawRoundGraph() {
