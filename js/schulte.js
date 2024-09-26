@@ -703,7 +703,9 @@ var vueApp = new Vue({
                 ) {
                     // unclear this cell, but add 10 seconds
                     this.cells[this.clickIndex].colorStyle =
-                        this.groupColorStyles[this.clickIndex];
+                        this.groupColorStyles[
+                            this.cells[this.clickIndex].group
+                        ];
                     this.stats.startTime -= 10000;
                 }
                 this.stats.wrongClicks++;
