@@ -215,7 +215,7 @@ var appData = {
 
     tableWidth: 600,
     tableHeight: 600,
-    cellFontSize: 'calc(8vmin - 8px)',
+    cellFontSize: 16,
     selectTimeOut: 500,
     selectedTimerId: -1,
     gameTimerId: -1,
@@ -441,6 +441,9 @@ var vueApp = new Vue({
         nOffset() {
             this.initGame();
         },
+        cellFontSize(val) {
+            this.setCSSVar('--cell-font-size', `${val}px`);
+        },
     },
     computed: {
         clickedCell() {
@@ -496,10 +499,7 @@ var vueApp = new Vue({
             this.tableWidth = this.tableSize;
             this.tableHeight = this.tableSize;
             this.cellFontSize =
-                (parseInt(this.tableSize) * this.fontSize) /
-                    this.gridSize /
-                    133 +
-                'px';
+                (parseInt(this.tableSize) * this.fontSize) / this.gridSize / 133;
         },
         breakBetweenRounds() {
             this.stats.stopTime = performance.now();

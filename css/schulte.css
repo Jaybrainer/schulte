@@ -9,6 +9,7 @@
 
 :root {
     --grid-size: 5;
+    --cell-font-size: 16px;
 }
 
 html,
@@ -63,6 +64,7 @@ select::-ms-expand {
     border: 1px solid #ccc;
     cursor: default;
 
+    font-size: var(--cell-font-size);
     font-weight: bold;
 }
 

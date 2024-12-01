@@ -45,7 +45,6 @@
                     class="cell"
                     v-for="(cell, i) in cells"
                     :key="cell.id"
-                    :style="{ fontSize: cellFontSize }"
                     @mouseover="setHoveredCell(i, $event)"
                     @mouseleave="hoveredCell = -1"
                     @mousedown="setClickedCell(i, $event)"
