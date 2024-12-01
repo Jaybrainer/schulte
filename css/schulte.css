@@ -7,6 +7,10 @@
     seamless: seamless;
 }
 
+:root {
+    --grid-size: 5;
+}
+
 html,
 body {
     touch-action: none;
@@ -40,35 +44,21 @@ select::-ms-expand {
     position: absolute;
     top: 50%;
     left: 50%;
-    -ms-transform: translateX(-50%) translateY(-50%);
-    -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
-}
 
-.row {
-    margin: 0;
+    display: grid;
+    grid-template: repeat(var(--grid-size), 1fr) / repeat(var(--grid-size), 1fr);
 }
 
 .cell {
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -moz-box;
-    display: -ms-flexbox;
     display: flex;
 
-    -webkit-user-select: none;
-    -moz-user-select: -moz-none;
-    -ms-user-select: none;
     user-select: none;
 
     justify-content: center; /* align horizontal */
     align-items: center;
 
-    float: left;
     padding: 0;
-
-    width: 50%;
-    height: 100%;
 
     border: 1px solid #ccc;
     cursor: default;

@@ -42,39 +42,34 @@
                 :style="{ width: `${tableWidth}px`, height: `${tableHeight}px` }"
             >
                 <div
-                    v-for="r in gridRange"
-                    class="row"
-                    :style="{height: rowHeight}"
+                    class="cell"
+                    v-for="(cell, i) in cells"
+                    :key="cell.id"
+                    :style="{ fontSize: cellFontSize }"
+                    @mouseover="setHoveredCell(i, $event)"
+                    @mouseleave="hoveredCell = -1"
+                    @mousedown="setClickedCell(i, $event)"
+                    @touchstart="setClickedCell(i, $event.changedTouches[0])"
+                    @touchend="$event.preventDefault()"
+                    :class="{
+                        'normal-cell' : (!showHover && !showClickAnimation) || !gameStarted,
+                        'right-click' : leftRightClick && cell.rightClick && !tracedCell(i),
+                        'left-click' : leftRightClick && !cell.rightClick && !tracedCell(i),
+                        'hovered-cell': showHover && (hoveredCell == i) && gameStarted,
+                        'correct-cell': showClickAnimation && (clickedCell == i) && clickedCell == correctIndex && gameStarted,
+                        'wrong-cell'  : (showClickAnimation && (clickedCell == i) && clickedCell != correctIndex && gameStarted && !(frenzyMode && frenzyCount == 1) && !hoverMode) || cell.isReact,
+                        'traced-cell' : tracedCell(i) && showTrace &&  gameStarted,
+                        'transition' : gameStarted && !shuffleSymbols && !(frenzyMode && frenzyCount == 1) && !leftRightClick && showTransitions,
+                    }"
                 >
-                    <div
-                        v-for="c in gridRange"
-                        class="cell"
-                        :style="{width: colWidth, fontSize: cellFontSize }"
-                        @mouseover="setHoveredCell(r*gridSize + c, $event)"
-                        @mouseleave="hoveredCell = -1"
-                        @mousedown="setClickedCell(r*gridSize + c, $event)"
-                        @touchstart="setClickedCell(r*gridSize + c, $event.changedTouches[0])"
-                        @touchend="$event.preventDefault()"
-                        :class="{'normal-cell' : (!showHover && !showClickAnimation) || !gameStarted,
-                          'right-click' : leftRightClick && cells[r*gridSize + c].rightClick && !tracedCell(r*gridSize+c),
-                          'left-click' : leftRightClick && !cells[r*gridSize + c].rightClick && !tracedCell(r*gridSize+c),
-                          'hovered-cell': showHover && (hoveredCell == r*gridSize + c) && gameStarted,
-                          'correct-cell': showClickAnimation && (clickedCell == r*gridSize + c) && clickedCell == correctIndex && gameStarted,
-                          'wrong-cell'  : (showClickAnimation && (clickedCell == r*gridSize + c) && clickedCell != correctIndex && gameStarted && !(frenzyMode && frenzyCount == 1) && !hoverMode) || cells[r*gridSize + c].isReact,
-                          'traced-cell' : tracedCell(r*gridSize + c) && showTrace &&  gameStarted,
-                          'transition' : gameStarted && !shuffleSymbols && !(frenzyMode && frenzyCount == 1) && !leftRightClick && showTransitions
-                          
-                          }"
+                    <span
+                        :class="[cell.cssClasses]"
+                        :style="{ color: cell.colorStyle }"
+                        :id="`cell-${i}`"
+                        style="cursor: default"
                     >
-                        <span
-                            :class="[cells[r*gridSize + c].cssClasses]"
-                            :style="{color: cells[r*gridSize + c].colorStyle}"
-                            :id="'cell.'+r+'.'+c"
-                            style="cursor: default"
-                        >
-                            {{ cells[r*gridSize + c].symbol }}
-                        </span>
-                    </div>
+                        {{ cell.symbol }}
+                    </span>
                 </div>
             </div>
 

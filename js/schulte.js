@@ -213,8 +213,6 @@ var appData = {
     /** @type {Click[]} */
     mouseClicks: [],
 
-    rowHeight: '20%',
-    colWidth: '20%',
     tableWidth: 600,
     tableHeight: 600,
     cellFontSize: 'calc(8vmin - 8px)',
@@ -367,13 +365,9 @@ var vueApp = new Vue({
             if (val === true) {
                 this.flashlightMode = true;
             } else {
-                for (let i = 0; i < this.gridSize; i++) {
-                    for (let j = 0; j < this.gridSize; j++) {
-                        const elem = document.getElementById(
-                            'cell.' + i + '.' + j,
-                        );
-                        elem.style.opacity = 1;
-                    }
+                for (let i = 0; i < this.gridSize * this.gridSize; i++) {
+                    const elem = document.getElementById(`cell-${i}`);
+                    elem.style.opacity = 1;
                 }
                 this.flashlightMode = false;
             }
@@ -383,8 +377,8 @@ var vueApp = new Vue({
                 this.gridSize = parseInt(val); // recursion !!!
                 return;
             }
-            this.rowHeight = 100 / val + '%';
-            this.colWidth = 100 / val + '%';
+
+            this.setCSSVar('--grid-size', this.gridSize);
 
             this.initGame();
         },
@@ -462,6 +456,9 @@ var vueApp = new Vue({
         },
     },
     methods: {
+        setCSSVar(name, value) {
+            document.querySelector(':root').style.setProperty(name, value);
+        },
         initGame() {
             this.gameStarted = false;
             this.initTable();
@@ -1170,25 +1167,20 @@ var vueApp = new Vue({
             if (this.flashlightMode) {
                 const x = event.x;
                 const y = event.y;
-                for (let i = 0; i < this.gridSize; i++) {
-                    for (let j = 0; j < this.gridSize; j++) {
-                        const elem = document.getElementById(
-                            'cell.' + i + '.' + j,
-                        );
-                        const rect = elem.getBoundingClientRect();
-                        const cellMidX = rect.x + rect.width / 2;
-                        const cellMidY = rect.y + rect.height / 2;
-                        const dist = Math.sqrt(
-                            (cellMidX - x) * (cellMidX - x) +
-                                (cellMidY - y) * (cellMidY - y),
-                        );
-                        let opacity =
-                            (this.tableSize * 0.35 - dist) /
-                            (this.tableSize * 0.1);
-                        if (opacity > 1) opacity = 1;
-                        if (opacity < 0.5) opacity = 0;
-                        elem.style.opacity = opacity;
-                    }
+                for (let i = 0; i < this.gridSize * this.gridSize; i++) {
+                    const elem = document.getElementById(`cell-${i}`);
+                    const rect = elem.getBoundingClientRect();
+                    const cellMidX = rect.x + rect.width / 2;
+                    const cellMidY = rect.y + rect.height / 2;
+                    const dist = Math.sqrt(
+                        (cellMidX - x) * (cellMidX - x) +
+                        (cellMidY - y) * (cellMidY - y),
+                    );
+                    let opacity =
+                        (this.tableSize * 0.35 - dist) / (this.tableSize * 0.1);
+                    if (opacity > 1) opacity = 1;
+                    if (opacity < 0.5) opacity = 0;
+                    elem.style.opacity = opacity;
                 }
             }
             if (this.mouseTracking) {
