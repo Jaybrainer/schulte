@@ -2,7 +2,10 @@
 <html lang="en" oncontextmenu="return false">
     <head>
         <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        />
         <meta http-equiv="X-UA-Compatible" content="ie=edge" />
         <link rel="stylesheet" href="css/w3.css" />
         <link rel="stylesheet" href="css/schulte.css" />
@@ -50,6 +53,8 @@
                         @mouseover="setHoveredCell(r*gridSize + c, $event)"
                         @mouseleave="hoveredCell = -1"
                         @mousedown="setClickedCell(r*gridSize + c, $event)"
+                        @touchstart="setClickedCell(r*gridSize + c, $event.changedTouches[0])"
+                        @touchend="$event.preventDefault()"
                         :class="{'normal-cell' : (!showHover && !showClickAnimation) || !gameStarted,
                           'right-click' : leftRightClick && cells[r*gridSize + c].rightClick && !tracedCell(r*gridSize+c),
                           'left-click' : leftRightClick && !cells[r*gridSize + c].rightClick && !tracedCell(r*gridSize+c),
@@ -234,7 +239,8 @@
                                 <label class="w3-validate">Offset: </label>
                                 <input
                                     id="nOffset"
-                                    v-model="nOffset"
+                                    v-model.lazy="nOffset"
+                                    type="number"
                                     style="width: 50%"
                                 />
                             </div>
@@ -380,7 +386,8 @@
                                     <label class="w3-validate">Size: </label>
                                     <input
                                         id="tableSize"
-                                        v-model="tableSize"
+                                        v-model.lazy="tableSize"
+                                        type="number"
                                         style="width: 50%"
                                     />
                                     <label class="w3-validate">px</label>
@@ -389,7 +396,8 @@
                                     <label class="w3-validate">Font: </label>
                                     <input
                                         id="fontSize"
-                                        v-model="fontSize"
+                                        v-model.lazy="fontSize"
+                                        type="number"
                                         style="width: 50%"
                                     />
                                     <label class="w3-validate">%</label>

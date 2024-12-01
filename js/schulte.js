@@ -334,6 +334,11 @@ var vueApp = new Vue({
     el: '#app',
     data: appData,
     created() {
+        this.tableSize = Math.min(
+            this.tableSize,
+            window.innerWidth,
+            window.innerHeight,
+        );
         this.initGame();
         this.clickSound = new Audio('js/bop.mp3');
         const temp = localStorage.getItem(PB_KEY);
@@ -434,13 +439,13 @@ var vueApp = new Vue({
             this.initGame();
         },
         tableSize() {
-            setTimeout(() => document.getElementById('tableSize').focus(), 0);
+            this.initGame();
         },
         fontSize() {
-            setTimeout(() => document.getElementById('fontSize').focus(), 0);
+            this.initGame();
         },
         nOffset() {
-            setTimeout(() => document.getElementById('nOffset').focus(), 0);
+            this.initGame();
         },
     },
     computed: {
@@ -563,7 +568,7 @@ var vueApp = new Vue({
         setClickedCell(cellIdx, event) {
             if (this.leftRightClick) {
                 this.lastClickButton = event.button;
-            } else if (event.button != 0) return;
+            } // else if (event.button != 0) return;
             if (this.betweenRounds) return;
             if (this.gameStarted) {
                 if (this.startOnClick && !this.hasClickedYet) {
