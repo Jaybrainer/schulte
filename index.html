@@ -50,16 +50,7 @@
                     @mousedown="setClickedCell(i, $event)"
                     @touchstart="setClickedCell(i, $event.changedTouches[0])"
                     @touchend="$event.preventDefault()"
-                    :class="{
-                        'normal-cell' : (!showHover && !showClickAnimation) || !gameStarted,
-                        'right-click' : leftRightClick && cell.rightClick && !tracedCell(i),
-                        'left-click' : leftRightClick && !cell.rightClick && !tracedCell(i),
-                        'hovered-cell': showHover && (hoveredCell == i) && gameStarted,
-                        'correct-cell': showClickAnimation && (clickedCell == i) && clickedCell == correctIndex && gameStarted,
-                        'wrong-cell'  : (showClickAnimation && (clickedCell == i) && clickedCell != correctIndex && gameStarted && !(frenzyMode && frenzyCount == 1) && !hoverMode) || cell.isReact,
-                        'traced-cell' : tracedCell(i) && showTrace &&  gameStarted,
-                        'transition' : gameStarted && !shuffleSymbols && !(frenzyMode && frenzyCount == 1) && !leftRightClick && showTransitions,
-                    }"
+                    :class="getCellClasses(cell, i)"
                 >
                     <span
                         :class="[cell.cssClasses]"

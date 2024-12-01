@@ -459,6 +459,52 @@ var vueApp = new Vue({
         },
     },
     methods: {
+        getCellClasses(cell, i) {
+            if (!this.gameStarted) {
+                return;
+            }
+
+            const classes = {};
+            // apply left-right colors
+            if (this.leftRightClick && !cell.traced) {
+                if (cell.rightClick) {
+                    classes['right-click'] = true;
+                } else {
+                    classes['left-click'] = true;
+                }
+            }
+
+            // apply hover border
+            if (this.showHover && this.hoveredCell == i) {
+                classes['hovered-cell'] = true;
+            }
+
+            // apply click state
+            if (this.showClickAnimation && this.clickedCell == i) {
+                if (i == this.correctIndex) {
+                    classes['correct-cell'] = true;
+                } else if (!(this.frenzyMode && this.frenzyCount == 1) && !this.hoverMode) {
+                    // this one also applies when the cell is react, need to fix
+                    classes['wrong-cell'] = true;
+                }
+            }
+
+            if (cell.isReact) {
+                classes['react-cell'] = true;
+            }
+
+            // mark finished (traced) cells
+            if (this.showTrace && cell.traced) {
+                classes['traced-cell'] = true;
+            }
+
+            // handle animations
+            if (this.showTransitions && !this.shuffleSymbols && !(this.frenzyMode && this.frenzyCount == 1) && !this.leftRightClick) {
+                classes['transition'] = true;
+            }
+
+            return classes;
+        },
         setCSSVar(name, value) {
             document.querySelector(':root').style.setProperty(name, value);
         },

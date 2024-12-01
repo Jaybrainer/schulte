@@ -60,8 +60,45 @@ select::-ms-expand {
 
     border: 1px solid #ccc;
     cursor: default;
+    color: black;
+    background: white;
 
     font-size: var(--cell-font-size);
+    font-weight: bold;
+}
+
+.underline {
+    text-decoration: underline;
+}
+
+.hovered-cell {
+    color: black;
+    /*background: rgb(249, 246, 243);*/
+    border: 1px solid #555;
+}
+
+.traced-cell {
+    color: black;
+    background: #b5fcac;
+}
+
+.correct-cell {
+    color: black;
+    background: #b5fcac;
+}
+
+.wrong-cell {
+    color: black;
+    background: #f4adad;
+}
+
+.react-cell {
+    color: transparent;
+    background: black;
+}
+
+.cell-symbol {
+    color: inherit;
     font-weight: bold;
 }
 
@@ -121,46 +158,6 @@ select::-ms-expand {
     100% {
         transform: rotate(-359deg);
     }
-}
-
-.cell-symbol {
-    color: inherit;
-    font-weight: bold;
-}
-
-.underline {
-    text-decoration: underline;
-}
-
-.normal-cell {
-    color: black;
-    background: white;
-}
-
-.hovered-cell {
-    color: black;
-    /*background: rgb(249, 246, 243);*/
-    border: 1px solid #555;
-}
-
-.traced-cell {
-    color: black;
-    background: #b5fcac;
-}
-
-.selected-cell {
-    color: white;
-    background: navy;
-}
-
-.correct-cell {
-    color: black;
-    background: #b5fcac;
-}
-
-.wrong-cell {
-    color: black;
-    background: #f4adad;
 }
 
 .color-num {
