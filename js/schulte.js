@@ -367,10 +367,6 @@ var vueApp = new Vue({
             }
         },
         gridSize(val) {
-            if (typeof val === 'string') {
-                val = parseInt(val);
-            }
-
             this.setCSSVar('--grid-size', this.gridSize);
 
             this.initGame();
@@ -539,9 +535,7 @@ var vueApp = new Vue({
             this.tableWidth = this.tableSize;
             this.tableHeight = this.tableSize;
             this.cellFontSize =
-                (parseInt(this.tableSize) * this.fontSize) /
-                this.gridSize /
-                133;
+                (this.tableSize * this.fontSize) / this.gridSize / 133;
         },
         breakBetweenRounds() {
             this.stats.stopTime = performance.now();
@@ -676,9 +670,7 @@ var vueApp = new Vue({
                     }
                     const nextGoal = Math.min(
                         this.cells.length - 1,
-                        this.stats.correctClicks +
-                            parseInt(this.frenzyCount) -
-                            1,
+                        this.stats.correctClicks + this.frenzyCount - 1,
                     );
                     for (let i = 0; i < this.cells.length; i++) {
                         if (
@@ -874,11 +866,7 @@ var vueApp = new Vue({
                 for (let i = 1; i <= this.groups[g].size; i++) {
                     let cell = new Cell(i);
                     cell.group = g;
-                    if (!isNaN(parseInt(this.nOffset))) {
-                        cell.symbol = String(
-                            cell.number + parseInt(this.nOffset),
-                        );
-                    }
+                    cell.symbol = String(cell.number + this.nOffset);
                     cell.colorStyle = this.groupColorStyles[g];
                     if (this.leftRightClick) {
                         cell.rightClick = Math.random() > 0.5;
@@ -1059,12 +1047,6 @@ var vueApp = new Vue({
                 this.restartMouseTracking();
             }
         },
-        changeGridSize(event) {
-            const val = parseInt(event.target.value);
-            if (!isNaN(val) && val >= 2 && val <= 9) {
-                this.gridSize = val;
-            }
-        },
         updateSymbolSpins() {
             for (let i = 0; i < this.cells.length; i++) {
                 this.cells[i].cssClasses['spin-left'] = false;
@@ -1183,8 +1165,8 @@ var vueApp = new Vue({
             if (this.leftRightClick) {
                 category += ' LR';
             }
-            if (!isNaN(parseInt(this.nOffset)) && parseInt(this.nOffset) != 0) {
-                category += ' Offset ' + parseInt(this.nOffset);
+            if (this.nOffset !== 0) {
+                category += ' Offset ' + String(this.nOffset);
             }
             if (this.mathMode) {
                 category += ' Math';
