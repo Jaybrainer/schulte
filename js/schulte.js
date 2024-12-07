@@ -358,9 +358,6 @@ var vueApp = new Vue({
         }
     },
     watch: {
-        roundCount(val) {
-            this.roundCount = parseInt(val);
-        },
         flashlightMode(val) {
             if (!val) {
                 for (let i = 0; i < this.gridSize * this.gridSize; i++) {
@@ -375,13 +372,6 @@ var vueApp = new Vue({
             }
 
             this.setCSSVar('--grid-size', this.gridSize);
-
-            this.initGame();
-        },
-        rounds(val) {
-            if (typeof val === 'string') {
-                val = parseInt(val);
-            }
 
             this.initGame();
         },
@@ -479,7 +469,10 @@ var vueApp = new Vue({
             if (this.showClickAnimation && this.clickedCell == i) {
                 if (i == this.correctIndex) {
                     classes['correct-cell'] = true;
-                } else if (!(this.frenzyMode && this.frenzyCount == 1) && !this.hoverMode) {
+                } else if (
+                    !(this.frenzyMode && this.frenzyCount == 1) &&
+                    !this.hoverMode
+                ) {
                     // this one also applies when the cell is react, need to fix
                     classes['wrong-cell'] = true;
                 }
@@ -495,7 +488,12 @@ var vueApp = new Vue({
             }
 
             // handle animations
-            if (this.showTransitions && !this.shuffleSymbols && !(this.frenzyMode && this.frenzyCount == 1) && !this.leftRightClick) {
+            if (
+                this.showTransitions &&
+                !this.shuffleSymbols &&
+                !(this.frenzyMode && this.frenzyCount == 1) &&
+                !this.leftRightClick
+            ) {
                 classes['transition'] = true;
             }
 
@@ -541,7 +539,9 @@ var vueApp = new Vue({
             this.tableWidth = this.tableSize;
             this.tableHeight = this.tableSize;
             this.cellFontSize =
-                (parseInt(this.tableSize) * this.fontSize) / this.gridSize / 133;
+                (parseInt(this.tableSize) * this.fontSize) /
+                this.gridSize /
+                133;
         },
         breakBetweenRounds() {
             this.stats.stopTime = performance.now();
@@ -1216,7 +1216,7 @@ var vueApp = new Vue({
                     const cellMidY = rect.y + rect.height / 2;
                     const dist = Math.sqrt(
                         (cellMidX - x) * (cellMidX - x) +
-                        (cellMidY - y) * (cellMidY - y),
+                            (cellMidY - y) * (cellMidY - y),
                     );
                     let opacity =
                         (this.tableSize * 0.35 - dist) / (this.tableSize * 0.1);
