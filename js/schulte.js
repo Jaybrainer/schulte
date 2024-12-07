@@ -365,7 +365,7 @@ var vueApp = new Vue({
             if (!val) {
                 for (let i = 0; i < this.gridSize * this.gridSize; i++) {
                     const elem = document.getElementById(`cell-${i}`);
-                    elem.style.opacity = 1;
+                    elem.style.opacity = "1";
                 }
             }
         },
@@ -1222,7 +1222,7 @@ var vueApp = new Vue({
                         (this.tableSize * 0.35 - dist) / (this.tableSize * 0.1);
                     if (opacity > 1) opacity = 1;
                     if (opacity < 0.5) opacity = 0;
-                    elem.style.opacity = opacity;
+                    elem.style.opacity = String(opacity);
                 }
             }
             if (this.mouseTracking) {
