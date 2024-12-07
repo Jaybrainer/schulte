@@ -365,7 +365,7 @@ var vueApp = new Vue({
             if (!val) {
                 for (let i = 0; i < this.gridSize * this.gridSize; i++) {
                     const elem = document.getElementById(`cell-${i}`);
-                    elem.style.opacity = "1";
+                    elem.style.opacity = '1';
                 }
             }
         },
