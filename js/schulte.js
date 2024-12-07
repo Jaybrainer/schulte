@@ -17,6 +17,7 @@ class Cell {
         };
         this.isReact = false;
         this.colorStyle = 'black';
+        this.opacity = 1;
     }
 }
 
@@ -360,9 +361,8 @@ var vueApp = new Vue({
     watch: {
         flashlightMode(val) {
             if (!val) {
-                for (let i = 0; i < this.gridSize * this.gridSize; i++) {
-                    const elem = document.getElementById(`cell-${i}`);
-                    elem.style.opacity = '1';
+                for (const cell of this.cells) {
+                    cell.opacity = 1;
                 }
             }
         },
@@ -1192,7 +1192,7 @@ var vueApp = new Vue({
                         (this.tableSize * 0.35 - dist) / (this.tableSize * 0.1);
                     if (opacity > 1) opacity = 1;
                     if (opacity < 0.5) opacity = 0;
-                    elem.style.opacity = String(opacity);
+                    this.cells[i].opacity = opacity;
                 }
             }
             if (this.mouseTracking) {
