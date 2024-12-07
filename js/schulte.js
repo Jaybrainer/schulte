@@ -362,14 +362,11 @@ var vueApp = new Vue({
             this.roundCount = parseInt(val);
         },
         flashlightMode(val) {
-            if (val === true) {
-                this.flashlightMode = true;
-            } else {
+            if (!val) {
                 for (let i = 0; i < this.gridSize * this.gridSize; i++) {
                     const elem = document.getElementById(`cell-${i}`);
                     elem.style.opacity = 1;
                 }
-                this.flashlightMode = false;
             }
         },
         gridSize(val) {
