@@ -374,8 +374,7 @@ var vueApp = new Vue({
         },
         gridSize(val) {
             if (typeof val === 'string') {
-                this.gridSize = parseInt(val); // recursion !!!
-                return;
+                val = parseInt(val);
             }
 
             this.setCSSVar('--grid-size', this.gridSize);
