@@ -502,7 +502,7 @@ var vueApp = new Vue({
             return classes;
         },
         setCSSVar(name, value) {
-            document.querySelector(':root').style.setProperty(name, value);
+            document.documentElement.style.setProperty(name, value);
         },
         initGame() {
             this.gameStarted = false;
