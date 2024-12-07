@@ -16,7 +16,8 @@ body {
 }
 
 body {
-    margin: 50px;
+    margin: 0;
+    padding: 0;
     font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -31,11 +32,16 @@ select::-ms-expand {
     display: none;
 }
 
-.wrapper {
-    overflow-y: hidden;
+#app {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
     overflow-x: hidden;
-    width: 100%;
-    height: 100%;
+    overflow-y: hidden;
 }
 
 .schulte {
@@ -67,58 +73,61 @@ select::-ms-expand {
     font-weight: bold;
 }
 
-.underline {
+.cell span.underline {
     text-decoration: underline;
 }
 
-.hovered-cell {
+.cell.hovered-cell {
     color: black;
     /*background: rgb(249, 246, 243);*/
     border: 1px solid #555;
 }
 
-.traced-cell {
+.cell.traced-cell {
     color: black;
     background: #b5fcac;
 }
 
-.correct-cell {
+.cell.correct-cell {
     color: black;
     background: #b5fcac;
 }
 
-.wrong-cell {
+.cell.wrong-cell {
     color: black;
     background: #f4adad;
 }
 
-.react-cell {
+.cell.react-cell {
     color: transparent;
     background: black;
 }
 
-.cell-symbol {
-    color: inherit;
-    font-weight: bold;
+.cell.left-click {
+    background: #99f;
 }
 
-.transition {
+.cell.right-click {
+    background: #fa7;
+}
+
+.cell.transition {
     transition: background 800ms;
 }
 
-.rotate-90 {
+.cell span.rotate-90 {
     transform: rotate(90deg);
 }
 
-.rotate-180 {
+.cell span.rotate-180 {
     transform: rotate(180deg);
 }
 
-.rotate-270 {
+.cell span.rotate-270 {
     transform: rotate(270deg);
 }
 
-.spin-right {
+.cell span.spin-right {
     animation: spin-right 2s infinite linear;
 }
 
@@ -139,7 +148,7 @@ select::-ms-expand {
     }
 }
 
-.spin-left {
+.cell span.spin-left {
     animation: spin-left 2s infinite linear;
 }
 
@@ -189,23 +198,8 @@ select::-ms-expand {
     opacity: 1;
 }
 
-.grid-input {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1;
-}
-
 .hover-text-bold:hover {
     font-weight: bold;
-}
-
-.display-block {
-    display: block;
-}
-
-.display-none {
-    display: none;
 }
 
 .mouse-map {
@@ -224,14 +218,6 @@ select::-ms-expand {
     background: url('../img/green_dot.png');
 }
 
-.right-click {
-    background: #fa7;
-}
-
-.left-click {
-    background: #99f;
-}
-
 .round-display {
     position: fixed;
     top: 2px;
@@ -241,27 +227,27 @@ select::-ms-expand {
     user-select: none;
 }
 
-.spin-speed1 {
+.schulte.spin-speed1 {
     animation: spin 4s linear infinite;
 }
 
-.spin-speed2 {
+.schulte.spin-speed2 {
     animation: spin 3s linear infinite;
 }
 
-.spin-speed3 {
+.schulte.spin-speed3 {
     animation: spin 2s linear infinite;
 }
 
-.spin-speed4 {
+.schulte.spin-speed4 {
     animation: spinrev 4s linear infinite;
 }
 
-.spin-speed5 {
+.schulte.spin-speed5 {
     animation: spinrev 3s linear infinite;
 }
 
-.spin-speed6 {
+.schulte.spin-speed6 {
     animation: spinrev 2s linear infinite;
 }
 
