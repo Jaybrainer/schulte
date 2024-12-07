@@ -427,19 +427,7 @@ var vueApp = new Vue({
             this.setCSSVar('--cell-font-size', `${val}px`);
         },
     },
-    computed: {
-        clickedCell() {
-            return this.clickIndex;
-        },
-        hoveredCell: {
-            get() {
-                return this.hoverIndex;
-            },
-            set(cellIdx) {
-                this.hoverIndex = cellIdx;
-            },
-        },
-    },
+    computed: {},
     methods: {
         getCellClasses(cell, i) {
             if (!this.gameStarted) {
@@ -457,12 +445,12 @@ var vueApp = new Vue({
             }
 
             // apply hover border
-            if (this.showHover && this.hoveredCell == i) {
+            if (this.showHover && this.hoverIndex == i) {
                 classes['hovered-cell'] = true;
             }
 
             // apply click state
-            if (this.showClickAnimation && this.clickedCell == i) {
+            if (this.showClickAnimation && this.clickIndex == i) {
                 if (i == this.correctIndex) {
                     classes['correct-cell'] = true;
                 } else if (
@@ -590,7 +578,7 @@ var vueApp = new Vue({
             this.correctIndex = -1;
         },
         setHoveredCell(cellIdx, event) {
-            this.hoveredCell = cellIdx;
+            this.hoverIndex = cellIdx;
             if (this.gameStarted && this.hoverMode) {
                 this.clickIndex = cellIdx;
                 if (this.isCellCorrect(this.clickIndex)) {

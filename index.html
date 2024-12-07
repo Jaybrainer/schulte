@@ -46,7 +46,7 @@
                     v-for="(cell, i) in cells"
                     :key="cell.id"
                     @mouseover="setHoveredCell(i, $event)"
-                    @mouseleave="hoveredCell = -1"
+                    @mouseleave="hoverIndex = -1"
                     @mousedown="setClickedCell(i, $event)"
                     @touchstart="setClickedCell(i, $event.changedTouches[0])"
                     @touchend="$event.preventDefault()"
