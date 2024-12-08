@@ -22,58 +22,93 @@ class Cell {
 }
 
 class Group {
-    constructor(size) {
+    constructor(size, inverted = false, divergent = false) {
         this.size = size;
-        this.currNum = 1;
-        this.inverted = false;
-        this.divergent = false;
+        this.inverted = inverted;
+        this.divergent = divergent;
+        this.numbers = [];
+        this.currNum = -1;
+        this.nextIndex = 0;
+    }
+
+    toString() {
+        if (this.divergent) {
+            const first = this.numbers[0];
+            const second = this.numbers[1];
+            if (this.inverted) {
+                return first + '&rarr;|&larr;' + second;
+            } else {
+                return '&larr;' + first + '|' + second + '&rarr;';
+            }
+        } else {
+            const first = this.numbers[0];
+            const last = this.numbers[this.numbers.length - 1];
+
+            return first + '&rarr;' + last;
+        }
+    }
+
+    initNumbers() {
+        let numbers = Array.from({ length: this.size }, (_, i) => i + 1);
+
+        if (this.divergent) {
+            const middle = Math.floor(this.size / 2);
+            const firstHalf = numbers.slice(0, middle);
+            const secondHalf = numbers.slice(middle);
+
+            if (this.inverted) {
+                secondHalf.reverse();
+            } else {
+                firstHalf.reverse();
+            }
+
+            numbers = [];
+            for (let i = 0; i < firstHalf.length; i++) {
+                numbers.push(firstHalf[i]);
+                numbers.push(secondHalf[i]);
+            }
+
+            if (secondHalf.length !== firstHalf.length) {
+                numbers.push(secondHalf[secondHalf.length - 1]);
+            }
+        } else if (this.inverted) {
+            numbers.reverse();
+        }
+
+        this.numbers = numbers;
+        this.currNum = numbers[0];
     }
 
     firstNumber() {
-        if (this.inverted && !this.divergent) {
-            return this.size;
-        } else if (this.divergent && !this.inverted) {
-            return Math.floor(this.size / 2);
-        } else {
-            return 1;
-        }
+        return this.numbers[0];
     }
 
     lastNumber() {
-        if (!this.inverted) {
-            return this.size;
-        } else if (this.divergent) {
-            return Math.floor(this.size / 2) + 1;
-        } else {
-            return 1;
-        }
+        return this.numbers[this.numbers.length - 1];
     }
 
     nextNumber(currNum = this.currNum) {
-        if (!this.divergent && !this.inverted) {
-            return currNum + 1;
-        } else if (!this.divergent) {
-            return currNum - 1;
+        const currIndex = this.numbers.indexOf(currNum);
+        this.currNum = this.numbers[currIndex + 1];
+        return this.currNum;
+    }
+
+    next() {
+        const nextNum = (this.currNum = this.numbers[this.nextIndex]);
+        this.nextIndex++;
+        if (typeof nextNum === 'undefined') {
+            return {
+                done: true,
+            };
         } else {
-            const h = Math.floor(this.size / 2);
-            if (this.inverted) {
-                if (currNum <= h) {
-                    return this.size - currNum + 1;
-                } else {
-                    // currNum > h
-                    return 2 + (this.size - currNum);
-                }
-            } else {
-                const evenSize = 2 * h;
-                if (currNum == evenSize) {
-                    return evenSize + 1;
-                } else if (currNum <= h) {
-                    return evenSize - currNum + 1;
-                } else {
-                    return evenSize - currNum;
-                }
-            }
+            return {
+                value: nextNum,
+            };
         }
+    }
+
+    [Symbol.iterator]() {
+        return this;
     }
 }
 
@@ -497,6 +532,10 @@ var vueApp = new Vue({
             this.updateSymbolTurns();
             this.updateSymbolSpins();
             this.updateUnderlines();
+            this.tableWidth = this.tableSize;
+            this.tableHeight = this.tableSize;
+            this.cellFontSize =
+                (this.tableSize * this.fontSize) / this.gridSize / 133;
         },
         startGame() {
             this.initGame();
@@ -668,20 +707,20 @@ var vueApp = new Vue({
                     this.correctIndex = this.clickIndex;
                 }
 
-                    if (this.stats.correctClicks === this.cells.length) {
-                        if (this.currentRoundNumber() >= this.roundCount) {
-                            this.stats.endRound();
-                            this.stopGame();
-                            this.updatePB();
-                            this.execDialog('stats');
-                        } else {
-                            this.breakBetweenRounds();
-                            if (!this.roundBreaks) {
-                                this.startNextRound();
-                            }
-                        }
+                if (this.stats.correctClicks === this.cells.length) {
+                    if (this.currentRoundNumber() >= this.roundCount) {
+                        this.stats.endRound();
+                        this.stopGame();
+                        this.updatePB();
+                        this.execDialog('stats');
                     } else {
-                        this.nextNum();
+                        this.breakBetweenRounds();
+                        if (!this.roundBreaks) {
+                            this.startNextRound();
+                        }
+                    }
+                } else {
+                    this.nextNum();
                 }
             } else {
                 if (this.noErrors) {
@@ -741,8 +780,7 @@ var vueApp = new Vue({
             const isLast =
                 this.groups[this.currGroup].lastNumber() ==
                 this.groups[this.currGroup].currNum;
-            this.groups[this.currGroup].currNum =
-                this.groups[this.currGroup].nextNumber();
+            this.groups[this.currGroup].next();
 
             if (isLast || this.collateGroups) {
                 this.nextGroup();
@@ -753,22 +791,7 @@ var vueApp = new Vue({
         },
         groupRange(groupIdx) {
             if (groupIdx >= 0 && groupIdx < this.groups.length) {
-                if (this.groups[groupIdx].divergent) {
-                    const h = Math.floor(this.groups[groupIdx].size / 2);
-                    if (this.groups[groupIdx].inverted) {
-                        return (
-                            '1&rarr;|' + '&larr;' + this.groups[groupIdx].size
-                        );
-                    } else {
-                        return '&larr;' + h + '|' + (h + 1) + '&rarr;';
-                    }
-                } else {
-                    if (this.groups[groupIdx].inverted) {
-                        return this.groups[groupIdx].size + '&rarr;1';
-                    } else {
-                        return '1&rarr;' + this.groups[groupIdx].size;
-                    }
-                }
+                return String(this.groups[groupIdx]);
             }
             return '?..?';
         },
@@ -778,7 +801,13 @@ var vueApp = new Vue({
 
             const numsInGroup = Math.floor(cellCount / this.groupCount);
             for (let g = 0; g < this.groupCount; g++) {
-                this.groups.push(new Group(numsInGroup));
+                this.groups.push(
+                    new Group(
+                        numsInGroup,
+                        this.inverseCount,
+                        this.divergentCount,
+                    ),
+                );
             }
             for (let i = 0; i < cellCount % this.groupCount; i++) {
                 this.groups[i].size++;
@@ -795,14 +824,10 @@ var vueApp = new Vue({
                     this.groups[g].inverted = various[g % 4].inverted;
                     this.groups[g].divergent = various[g % 4].divergent;
                 }
-            } else {
-                for (let g = 0; g < this.groupCount; g++) {
-                    this.groups[g].divergent = this.divergentCount;
-                    this.groups[g].inverted = this.inverseCount;
-                }
             }
+
             for (let g = 0; g < this.groupCount; g++) {
-                this.groups[g].currNum = this.groups[g].firstNumber();
+                this.groups[g].initNumbers();
             }
 
             const range = [];
