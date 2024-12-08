@@ -209,9 +209,7 @@ var appData = {
     nOffset: 0,
 
     mouseTracking: false,
-    /** @type {Point[]} */
     mouseMoves: [],
-    /** @type {Click[]} */
     mouseClicks: [],
 
     tableWidth: 600,
@@ -233,9 +231,7 @@ var appData = {
         lastTime: 0,
         correctClicks: 0,
         wrongClicks: 0,
-        /** @type {ClickStats[]} */
         clicks: [],
-        /** @type {RoundStats[]} */
         rounds: [],
         startRound() {
             const now = performance.now();
