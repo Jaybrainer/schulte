@@ -1058,12 +1058,14 @@ var vueApp = new Vue({
         updateUnderlines() {
             if (!(this.turnSymbols || this.spinSymbols || this.spinTable))
                 return;
-            const confusing = new Set('689');
             for (let i = 0; i < this.cells.length; i++) {
-                const digits = new Set(String(this.cells[i].number));
-                if (digits.isSubsetOf(confusing)) {
-                    this.cells[i].cssClasses['underline'] = true;
+                const digits = Array(...String(this.cells[i].symbol));
+                for (let j = 0; j < digits.length; j++) {
+                    if (digits[j] === '6') {
+                        digits[j] = '<u>6</u>';
+                    }
                 }
+                this.cells[i].symbol = digits.join('');
             }
         },
         updateColorStyles() {
