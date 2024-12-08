@@ -43,7 +43,7 @@
                 <div
                     class="cell"
                     v-for="(cell, i) in cells"
-                    :key="cell.id"
+                    :key="cell.orderIndex"
                     @mouseover="setHoveredCell(i, $event)"
                     @mouseleave="hoverIndex = -1"
                     @mousedown="setClickedCell(i, $event)"
