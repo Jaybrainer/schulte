@@ -140,19 +140,10 @@ class RoundStats {
 }
 
 function timeString(diff) {
-    const millis = Math.floor(diff % 1000);
-    diff = diff / 1000;
-    const seconds = Math.floor(diff % 60);
-    diff = diff / 60;
-    const minutes = Math.floor(diff);
-
-    return (
-        minutes +
-        ':' +
-        ('0' + seconds).slice(-2) +
-        '.' +
-        ('00' + millis).slice(-3)
-    );
+    if (diff >= 3600000) { // 1 hour or more
+        return new Date(diff).toISOString().slice(11, -1);
+    }
+    return new Date(diff).toISOString().slice(14, -1);
 }
 
 var appData = {
