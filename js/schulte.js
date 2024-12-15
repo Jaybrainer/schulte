@@ -346,7 +346,7 @@ var vueApp = new Vue({
             window.innerHeight,
         );
         this.initGame();
-        this.clickSound = new Audio('js/bop.mp3');
+        this.clickSound = new Audio('sounds/bop.mp3');
         const temp = localStorage.getItem(PB_KEY);
         console.log(temp);
         appData.personalBests = JSON.parse(
