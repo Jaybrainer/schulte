@@ -1,3 +1,5 @@
+import Vue from './vue.esm.browser.min.js';
+
 const PB_KEY = 'schulte-pbs';
 
 class Cell {

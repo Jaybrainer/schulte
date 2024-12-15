@@ -1,5 +1,7 @@
 _config.yml
 vue.js
 vue.min.js
+vue.esm.browser.js
+vue.esm.browser.min.js
 w3.css
 sounds
