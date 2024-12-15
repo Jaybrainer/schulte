@@ -17,13 +17,12 @@ class Cell {
             underline: false,
         };
         this.isReact = false;
-        this.colorStyle = 'black';
         this.opacity = 1;
     }
 }
 
 class Group {
-    constructor(size, inverted = false, divergent = false) {
+    constructor(size, { inverted = false, divergent = false }) {
         this.size = size;
         this.inverted = inverted;
         this.divergent = divergent;
@@ -140,7 +139,8 @@ class RoundStats {
 }
 
 function timeString(diff) {
-    if (diff >= 3600000) { // 1 hour or more
+    if (diff >= 3600000) {
+        // 1 hour or more
         return new Date(diff).toISOString().slice(11, -1);
     }
     return new Date(diff).toISOString().slice(14, -1);
@@ -743,12 +743,6 @@ var vueApp = new Vue({
             }
             return index;
         },
-        groupRange(groupIdx) {
-            if (0 <= groupIdx && groupIdx < this.groups.length) {
-                return String(this.groups[groupIdx]);
-            }
-            return '?..?';
-        },
         makeGridCells() {
             this.groups.length = 0;
             const cellCount = this.gridSize * this.gridSize;
@@ -756,11 +750,10 @@ var vueApp = new Vue({
             const numsInGroup = Math.floor(cellCount / this.groupCount);
             for (let g = 0; g < this.groupCount; g++) {
                 this.groups.push(
-                    new Group(
-                        numsInGroup,
-                        this.inverseCount,
-                        this.divergentCount,
-                    ),
+                    new Group(numsInGroup, {
+                        inverted: this.inverseCount,
+                        divergent: this.divergentCount,
+                    }),
                 );
             }
             for (let i = 0; i < cellCount % this.groupCount; i++) {
@@ -808,7 +801,6 @@ var vueApp = new Vue({
                 let cell = new Cell(number, orderIndex++);
                 cell.group = g;
                 cell.symbol = String(number + this.nOffset);
-                cell.colorStyle = this.groupColorStyles[g];
                 if (this.leftRightClick) {
                     cell.rightClick = Math.random() > 0.5;
                 }

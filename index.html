@@ -53,7 +53,7 @@
                 >
                     <span
                         :class="[cell.cssClasses]"
-                        :style="{ color: cell.colorStyle, opacity: cell.opacity }"
+                        :style="{ color: groupColorStyles[cell.group], opacity: cell.opacity }"
                         :id="`cell-${i}`"
                         v-html="cell.symbol"
                     >
@@ -255,10 +255,9 @@
                                 >
                                     <div
                                         class="color-num"
-                                        v-for="i in Array.from({length: groupCount}, (_, i) => i)"
-                                        v-if="groupCount > i"
-                                        v-html="groupRange(i)"
-                                        :style="{color: groupColorStyles[i]}"
+                                        v-for="(group, i) in groups"
+                                        v-html="String(group)"
+                                        :style="{ color: groupColorStyles[i] }"
                                     ></div>
                                     <br />
                                     <input
