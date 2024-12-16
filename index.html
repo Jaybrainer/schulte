@@ -11,11 +11,6 @@
         <link rel="stylesheet" href="css/main.css" />
         <script type="module" src="js/main.js"></script>
         <title>Schulte Table</title>
-        <style>
-            [v-cloak] {
-                display: none;
-            }
-        </style>
     </head>
     <body oncontextmenu="return false">
         <div
@@ -26,7 +21,6 @@
             @keydown.space="onSpace()"
             @keyup.enter="if(dialogShowed) hideDialog()"
             v-focus
-            v-cloak
         >
             <div
                 class="round-display"
