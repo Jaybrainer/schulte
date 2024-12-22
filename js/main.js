@@ -9,15 +9,15 @@ import RoundStats from './modules/round-stats.js';
 
 const PB_KEY = 'schulte-pbs';
 
-function timeString(diff) {
+const timeString = (window.timeString = (diff) => {
     if (diff >= 3600000) {
         // 1 hour or more
         return new Date(diff).toISOString().slice(11, -1);
     }
     return new Date(diff).toISOString().slice(14, -1);
-}
+});
 
-var appData = {
+const appData = (window.appData = {
     maxGridSize: 30,
     maxFrenzyCount: 6,
 
@@ -193,7 +193,7 @@ var appData = {
             return this.rounds.reduce((a, b) => a + b.duration, 0);
         },
     },
-};
+});
 
 Vue.directive('focus', {
     // https://jsfiddle.net/LukaszWiktor/cap43pdn/
@@ -207,7 +207,7 @@ Vue.directive('focus', {
     },
 });
 
-var vueApp = new Vue({
+const vueApp = (window.vueApp = new Vue({
     el: '#app',
     data: appData,
     created() {
@@ -1186,4 +1186,4 @@ var vueApp = new Vue({
             }
         },
     },
-});
+}));
