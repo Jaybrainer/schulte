@@ -296,6 +296,7 @@ const app = (window.app = createApp({
     },
     computed: {},
     methods: {
+        timeString, // make timeString available in html template
         getCellClasses(cell, i) {
             if (!this.gameStarted) {
                 return;
