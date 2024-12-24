@@ -9,6 +9,13 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge" />
         <link rel="stylesheet" href="css/w3.css" />
         <link rel="stylesheet" href="css/main.css" />
+        <script type="importmap">
+            {
+                "imports": {
+                    "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+                }
+            }
+        </script>
         <script type="module" src="js/main.js"></script>
         <title>Schulte Table</title>
         <style>
@@ -18,646 +25,669 @@
         </style>
     </head>
     <body oncontextmenu="return false">
-        <div
-            id="app"
-            tabindex="-1"
-            @mousemove="appendMouseMove($event)"
-            @keyup.esc="onEsc()"
-            @keydown.space="onSpace()"
-            @keyup.enter="if(dialogShowed) hideDialog()"
-            v-focus
-            v-cloak
-        >
+        <div id="app-wrapper" v-cloak>
             <div
-                class="round-display"
-                v-if="gameStarted && showRounds && roundCount > 1"
-            >
-                {{currentRoundNumber()}} / {{roundCount}}
-            </div>
-            <div
-                class="schulte"
-                :class="[spinTable ? gameStarted && ('spin-' + spinTableSpeed) : '']"
-                :style="{ width: `${tableWidth}px`, height: `${tableHeight}px` }"
+                id="app"
+                tabindex="-1"
+                @mousemove="appendMouseMove($event)"
+                @keyup.esc="onEsc()"
+                @keydown.space="onSpace()"
+                @keyup.enter="dialogShowed && hideDialog()"
+                v-focus
             >
                 <div
-                    class="cell"
-                    v-for="(cell, i) in cells"
-                    :key="cell.orderIndex"
-                    @mouseover="setHoveredCell(i, $event)"
-                    @mouseleave="hoverIndex = -1"
-                    @mousedown="setClickedCell(i, $event)"
-                    @touchstart="setClickedCell(i, $event.changedTouches[0])"
-                    @touchend="$event.preventDefault()"
-                    :class="getCellClasses(cell, i)"
+                    class="round-display"
+                    v-if="gameStarted && showRounds && roundCount > 1"
                 >
-                    <span
-                        :class="[cell.cssClasses]"
-                        :style="{ color: groupColorStyles[cell.group], opacity: cell.opacity }"
-                        :id="`cell-${i}`"
-                        v-html="cell.symbol"
-                    >
-                    </span>
+                    {{currentRoundNumber()}} / {{roundCount}}
                 </div>
-            </div>
-
-            <div class="center-dot" v-if="showCenterDot"></div>
-
-            <div
-                class="w3-modal"
-                :style="{display: dialogShowed ? 'block' : 'none'}"
-            >
                 <div
-                    class="w3-modal-content w3-card-4 w3-animate-zoom"
-                    style="min-width: 350px; max-width: 800px"
+                    class="schulte"
+                    :class="[spinTable ? gameStarted && ('spin-' + spinTableSpeed) : '']"
+                    :style="{ width: `${tableWidth}px`, height: `${tableHeight}px` }"
                 >
-                    <header class="w3-container w3-blue w3-center">
-                        <span
-                            @click="hideDialog"
-                            class="w3-button w3-display-topright w3-xxlarge w3-blue w3-hover-blue w3-hover-text-black"
-                            style="padding: 0 10px 0 0"
-                            title="Resume Test"
-                        >
-                            &times;
-                        </span>
-                        <h2>Schulte Table Test</h2>
-                    </header>
-
-                    <div class="w3-bar w3-light-grey w3-border-bottom">
-                        <button
-                            class="tablink w3-bar-item w3-button"
-                            @click="changeDialogTab('settings')"
-                            :class="[settingsTabVisible  ? 'w3-indigo w3-text-white w3-hover-indigo' : 'w3-light-grey w3-hover-white']"
-                        >
-                            Settings
-                        </button>
-                        <button
-                            class="tablink w3-bar-item w3-button"
-                            @click="changeDialogTab('stats')"
-                            :class="[statsTabVisible ? 'w3-indigo w3-text-white w3-hover-indigo' : 'w3-light-grey w3-hover-white']"
-                        >
-                            Stats
-                        </button>
-                        <button
-                            class="tablink w3-bar-item w3-button"
-                            @click="changeDialogTab('mousemap')"
-                            :class="[mousemapTabVisible ? 'w3-indigo w3-text-white w3-hover-indigo' : 'w3-light-grey w3-hover-white']"
-                        >
-                            Mouse Map
-                        </button>
-                    </div>
-
                     <div
-                        class="w3-container w3-margin w3-padding-0"
-                        v-if="settingsTabVisible"
+                        class="cell"
+                        v-for="(cell, i) in cells"
+                        :key="cell.orderIndex"
+                        @mouseover="setHoveredCell(i, $event)"
+                        @mouseleave="hoverIndex = -1"
+                        @mousedown="setClickedCell(i, $event)"
+                        @touchstart="setClickedCell(i, $event.changedTouches[0])"
+                        @touchend="$event.preventDefault()"
+                        :class="getCellClasses(cell, i)"
                     >
-                        <div class="w3-row">
-                            <div class="w3-col w3-third">
-                                <label
-                                    for="grid_size"
-                                    class="w3-text-black w3-block"
-                                >
-                                    <b>Grid</b>
-                                </label>
-                                <select
-                                    id="grid_size"
-                                    class="w3-select w3-border w3-padding-small"
-                                    style="width: 70%"
-                                    v-model="gridSize"
-                                >
-                                    <option
-                                        v-for="i in Array.from({length: maxGridSize - 1}, (_, i) => i + 2)"
-                                        :value="i"
-                                    >
-                                        {{i}} x {{i}}
-                                    </option>
-                                </select>
-                            </div>
+                        <span
+                            :class="[cell.cssClasses]"
+                            :style="{ color: groupColorStyles[cell.group], opacity: cell.opacity }"
+                            :id="`cell-${i}`"
+                            v-html="cell.symbol"
+                        >
+                        </span>
+                    </div>
+                </div>
 
-                            <div class="w3-col w3-third">
-                                <label
-                                    for="roundCount"
-                                    class="w3-text-black w3-block"
-                                >
-                                    <b>Rounds</b>
-                                </label>
-                                <select
-                                    id="roundCount"
-                                    class="w3-select w3-border w3-padding-small"
-                                    style="width: 80%"
-                                    v-model="roundCount"
-                                >
-                                    <option
-                                        v-for="i in roundOptions"
-                                        :value="i"
-                                    >
-                                        {{i}} round{{i > 1 ? 's' : ''}}
-                                    </option>
-                                </select>
-                            </div>
+                <div class="center-dot" v-if="showCenterDot"></div>
 
-                            <div class="w3-col w3-third">
-                                <label
-                                    for="groups"
-                                    class="w3-text-black w3-block"
-                                >
-                                    <b>Groups</b>
-                                </label>
-                                <select
-                                    id="groups"
-                                    class="w3-select w3-border w3-padding-small"
-                                    style="width: 70%"
-                                    v-model="groupCount"
-                                >
-                                    <option
-                                        v-for="i in Array.from({length: groupColorStyles.length}, (_, i) => i + 1)"
-                                        :value="i"
-                                    >
-                                        {{i}} group{{i > 1 ? 's' : ''}}
-                                    </option>
-                                </select>
-                            </div>
+                <div
+                    class="w3-modal"
+                    :style="{display: dialogShowed ? 'block' : 'none'}"
+                >
+                    <div
+                        class="w3-modal-content w3-card-4 w3-animate-zoom"
+                        style="min-width: 350px; max-width: 800px"
+                    >
+                        <header class="w3-container w3-blue w3-center">
+                            <span
+                                @click="hideDialog"
+                                class="w3-button w3-display-topright w3-xxlarge w3-blue w3-hover-blue w3-hover-text-black"
+                                style="padding: 0 10px 0 0"
+                                title="Resume Test"
+                            >
+                                &times;
+                            </span>
+                            <h2>Schulte Table Test</h2>
+                        </header>
+
+                        <div class="w3-bar w3-light-grey w3-border-bottom">
+                            <button
+                                class="tablink w3-bar-item w3-button"
+                                @click="changeDialogTab('settings')"
+                                :class="[settingsTabVisible  ? 'w3-indigo w3-text-white w3-hover-indigo' : 'w3-light-grey w3-hover-white']"
+                            >
+                                Settings
+                            </button>
+                            <button
+                                class="tablink w3-bar-item w3-button"
+                                @click="changeDialogTab('stats')"
+                                :class="[statsTabVisible ? 'w3-indigo w3-text-white w3-hover-indigo' : 'w3-light-grey w3-hover-white']"
+                            >
+                                Stats
+                            </button>
+                            <button
+                                class="tablink w3-bar-item w3-button"
+                                @click="changeDialogTab('mousemap')"
+                                :class="[mousemapTabVisible ? 'w3-indigo w3-text-white w3-hover-indigo' : 'w3-light-grey w3-hover-white']"
+                            >
+                                Mouse Map
+                            </button>
                         </div>
 
-                        <div class="w3-row">
-                            <div class="w3-col w3-third">
-                                <input
-                                    class="w3-check"
-                                    type="checkbox"
-                                    v-model="inverseCount"
-                                    :disabled="variousCounts"
-                                />
-                                <label class="w3-validate"
-                                    >Inverse Count
-                                </label>
-                                <br />
-                                <input
-                                    class="w3-check"
-                                    type="checkbox"
-                                    v-model="divergentCount"
-                                    :disabled="variousCounts"
-                                />
-                                <label class="w3-validate"
-                                    >Divergent Count
-                                </label>
-                                <br />
-                                <input
-                                    class="w3-check"
-                                    type="checkbox"
-                                    v-model="variousCounts"
-                                />
-                                <label class="w3-validate"
-                                    >Various Counts
-                                </label>
-                                <br />
-                                <input
-                                    class="w3-check"
-                                    type="checkbox"
-                                    v-model="collateGroups"
-                                />
-                                <label class="w3-validate"
-                                    >Collate Groups
-                                </label>
-                                <br />
-                                <label class="w3-validate">Offset: </label>
-                                <input
-                                    id="nOffset"
-                                    v-model.number.lazy="nOffset"
-                                    type="number"
-                                    style="width: 50%"
-                                />
+                        <div
+                            class="w3-container w3-margin w3-padding-0"
+                            v-if="settingsTabVisible"
+                        >
+                            <div class="w3-row">
+                                <div class="w3-col w3-third">
+                                    <label
+                                        for="grid_size"
+                                        class="w3-text-black w3-block"
+                                    >
+                                        <b>Grid</b>
+                                    </label>
+                                    <select
+                                        id="grid_size"
+                                        class="w3-select w3-border w3-padding-small"
+                                        style="width: 70%"
+                                        v-model="gridSize"
+                                    >
+                                        <option
+                                            v-for="i in Array.from({length: maxGridSize - 1}, (_, i) => i + 2)"
+                                            :value="i"
+                                        >
+                                            {{i}} x {{i}}
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="w3-col w3-third">
+                                    <label
+                                        for="roundCount"
+                                        class="w3-text-black w3-block"
+                                    >
+                                        <b>Rounds</b>
+                                    </label>
+                                    <select
+                                        id="roundCount"
+                                        class="w3-select w3-border w3-padding-small"
+                                        style="width: 80%"
+                                        v-model="roundCount"
+                                    >
+                                        <option
+                                            v-for="i in roundOptions"
+                                            :value="i"
+                                        >
+                                            {{i}} round{{i > 1 ? 's' : ''}}
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="w3-col w3-third">
+                                    <label
+                                        for="groups"
+                                        class="w3-text-black w3-block"
+                                    >
+                                        <b>Groups</b>
+                                    </label>
+                                    <select
+                                        id="groups"
+                                        class="w3-select w3-border w3-padding-small"
+                                        style="width: 70%"
+                                        v-model="groupCount"
+                                    >
+                                        <option
+                                            v-for="i in Array.from({length: groupColorStyles.length}, (_, i) => i + 1)"
+                                            :value="i"
+                                        >
+                                            {{i}} group{{i > 1 ? 's' : ''}}
+                                        </option>
+                                    </select>
+                                </div>
                             </div>
-                            <div class="w3-col w3-third">
-                                <input
-                                    class="w3-check"
-                                    type="checkbox"
-                                    v-model="roundBreaks"
-                                    :disabled="roundCount === 1"
-                                />
-                                <label class="w3-validate">Round Breaks</label>
-                                <br />
-                                <input
-                                    class="w3-check"
-                                    type="checkbox"
-                                    v-model="showRounds"
-                                    :disabled="roundCount === 1"
-                                />
-                                <label class="w3-validate">Show Round</label>
-                            </div>
-                            <div class="w3-col w3-third">
-                                <div
-                                    class="w3-container w3-padding-0"
-                                    style="
-                                        margin-top: 10px;
-                                        width: 90%;
-                                        float: left;
-                                    "
-                                >
-                                    <div
-                                        class="color-num"
-                                        v-for="(group, i) in groups"
-                                        v-html="String(group)"
-                                        :style="{ color: groupColorStyles[i] }"
-                                    ></div>
+
+                            <div class="w3-row">
+                                <div class="w3-col w3-third">
+                                    <input
+                                        class="w3-check"
+                                        type="checkbox"
+                                        v-model="inverseCount"
+                                        :disabled="variousCounts"
+                                    />
+                                    <label class="w3-validate"
+                                        >Inverse Count
+                                    </label>
                                     <br />
                                     <input
                                         class="w3-check"
                                         type="checkbox"
-                                        v-model="originalColors"
-                                        style="margin-top: 5px"
+                                        v-model="divergentCount"
+                                        :disabled="variousCounts"
                                     />
                                     <label class="w3-validate"
-                                        >Original Colors
+                                        >Divergent Count
                                     </label>
+                                    <br />
+                                    <input
+                                        class="w3-check"
+                                        type="checkbox"
+                                        v-model="variousCounts"
+                                    />
+                                    <label class="w3-validate"
+                                        >Various Counts
+                                    </label>
+                                    <br />
+                                    <input
+                                        class="w3-check"
+                                        type="checkbox"
+                                        v-model="collateGroups"
+                                    />
+                                    <label class="w3-validate"
+                                        >Collate Groups
+                                    </label>
+                                    <br />
+                                    <label class="w3-validate">Offset: </label>
+                                    <input
+                                        id="nOffset"
+                                        v-model.number.lazy="nOffset"
+                                        type="number"
+                                        style="width: 50%"
+                                    />
+                                </div>
+                                <div class="w3-col w3-third">
+                                    <input
+                                        class="w3-check"
+                                        type="checkbox"
+                                        v-model="roundBreaks"
+                                        :disabled="roundCount === 1"
+                                    />
+                                    <label class="w3-validate"
+                                        >Round Breaks</label
+                                    >
+                                    <br />
+                                    <input
+                                        class="w3-check"
+                                        type="checkbox"
+                                        v-model="showRounds"
+                                        :disabled="roundCount === 1"
+                                    />
+                                    <label class="w3-validate"
+                                        >Show Round</label
+                                    >
+                                </div>
+                                <div class="w3-col w3-third">
+                                    <div
+                                        class="w3-container w3-padding-0"
+                                        style="
+                                            margin-top: 10px;
+                                            width: 90%;
+                                            float: left;
+                                        "
+                                    >
+                                        <div
+                                            class="color-num"
+                                            v-for="(group, i) in groups"
+                                            v-html="String(group)"
+                                            :style="{ color: groupColorStyles[i] }"
+                                        ></div>
+                                        <br />
+                                        <input
+                                            class="w3-check"
+                                            type="checkbox"
+                                            v-model="originalColors"
+                                            style="margin-top: 5px"
+                                        />
+                                        <label class="w3-validate"
+                                            >Original Colors
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr style="margin: 10px 0" />
+
+                            <div class="w3-row w3-margin-0">
+                                <div
+                                    class="w3-container w3-col w3-third w3-padding-0"
+                                >
+                                    <p>
+                                        <input
+                                            class="w3-check"
+                                            type="checkbox"
+                                            v-model="showHover"
+                                        />
+                                        <label class="w3-validate"
+                                            >Show Hover</label
+                                        >
+                                    </p>
+                                    <p>
+                                        <input
+                                            class="w3-check"
+                                            type="checkbox"
+                                            v-model="showTrace"
+                                        />
+                                        <label class="w3-validate"
+                                            >Show Correct Cells</label
+                                        >
+                                    </p>
+                                    <p>
+                                        <input
+                                            class="w3-check"
+                                            type="checkbox"
+                                            v-model="showClickResult"
+                                        />
+                                        <label class="w3-validate"
+                                            >Show Click Result</label
+                                        >
+                                    </p>
+                                    <p>
+                                        <input
+                                            class="w3-check"
+                                            type="checkbox"
+                                            v-model="clearCorrect"
+                                        />
+                                        <label class="w3-validate"
+                                            >Empty Correct Cells</label
+                                        >
+                                    </p>
+                                    <p>
+                                        <input
+                                            class="w3-check"
+                                            type="checkbox"
+                                            v-model="showCenterDot"
+                                        />
+                                        <label class="w3-validate"
+                                            >Show Center Dot</label
+                                        >
+                                    </p>
+                                    <p>
+                                        <label class="w3-validate"
+                                            >Size:
+                                        </label>
+                                        <input
+                                            id="tableSize"
+                                            v-model.number.lazy="tableSize"
+                                            type="number"
+                                            style="width: 50%"
+                                        />
+                                        <label class="w3-validate">px</label>
+                                    </p>
+                                    <p>
+                                        <label class="w3-validate"
+                                            >Font:
+                                        </label>
+                                        <input
+                                            id="fontSize"
+                                            v-model.number.lazy="fontSize"
+                                            type="number"
+                                            style="width: 50%"
+                                        />
+                                        <label class="w3-validate">%</label>
+                                    </p>
+                                </div>
+
+                                <div
+                                    class="w3-container w3-col w3-third w3-padding-0"
+                                >
+                                    <p>
+                                        <input
+                                            class="w3-check"
+                                            type="checkbox"
+                                            v-model="turnSymbols"
+                                        />
+                                        <label class="w3-validate"
+                                            >Turn Numbers</label
+                                        >
+                                    </p>
+                                    <p>
+                                        <input
+                                            class="w3-check"
+                                            type="checkbox"
+                                            v-model="spinSymbols"
+                                        />
+                                        <label class="w3-validate"
+                                            >Spin Numbers</label
+                                        >
+                                    </p>
+                                    <p>
+                                        <input
+                                            class="w3-check"
+                                            type="checkbox"
+                                            v-model="spinTable"
+                                        />
+                                        <label class="w3-validate"
+                                            >Spin Table</label
+                                        >
+                                        <select
+                                            id="frenzy"
+                                            class="w3-select w3-border w3-padding-small"
+                                            style="width: 30%"
+                                            v-model="spinTableSpeed"
+                                        >
+                                            <option value="speed1">Low</option>
+                                            <option value="speed2">
+                                                Medium
+                                            </option>
+                                            <option value="speed3">High</option>
+                                            <option value="speed4">
+                                                CCW Low
+                                            </option>
+                                            <option value="speed5">
+                                                CCW Medium
+                                            </option>
+                                            <option value="speed6">
+                                                CCW High
+                                            </option>
+                                        </select>
+                                    </p>
+                                    <p>
+                                        <input
+                                            class="w3-check"
+                                            type="checkbox"
+                                            v-model="noErrors"
+                                        />
+                                        <label class="w3-validate"
+                                            >No Errors</label
+                                        >
+                                    </p>
+                                    <p>
+                                        <input
+                                            class="w3-check"
+                                            type="checkbox"
+                                            v-model="useClickSound"
+                                        />
+                                        <label class="w3-validate"
+                                            >Click Sound</label
+                                        >
+                                    </p>
+                                    <p>
+                                        <input
+                                            class="w3-check"
+                                            type="checkbox"
+                                            v-model="startOnClick"
+                                        />
+                                        <label class="w3-validate"
+                                            >Start Timer on Click</label
+                                        >
+                                    </p>
+                                    <p>
+                                        <input
+                                            class="w3-check"
+                                            type="checkbox"
+                                            v-model="leftRightClick"
+                                            :disabled="hoverMode"
+                                        />
+                                        <label class="w3-validate"
+                                            >Left/Right Click Colors</label
+                                        >
+                                    </p>
+                                </div>
+
+                                <div
+                                    class="w3-container w3-col w3-third w3-padding-0"
+                                >
+                                    <p>
+                                        <input
+                                            class="w3-check"
+                                            type="checkbox"
+                                            v-model="shuffleSymbols"
+                                        />
+                                        <label class="w3-validate"
+                                            >Shuffle Numbers</label
+                                        >
+                                    </p>
+                                    <p>
+                                        <input
+                                            class="w3-check"
+                                            type="checkbox"
+                                            v-model="frenzyMode"
+                                            :disabled="blindMode"
+                                        />
+                                        <label class="w3-validate"
+                                            >Frenzy Mode</label
+                                        >
+                                        <select
+                                            id="frenzy"
+                                            class="w3-select w3-border w3-padding-small"
+                                            style="width: 30%"
+                                            v-model="frenzyCount"
+                                        >
+                                            <option
+                                                v-for="i in Array.from({length: maxFrenzyCount}, (_, i) => i + 1)"
+                                                :value="i"
+                                            >
+                                                {{i}}{{i === 1 ? ' (React)' :
+                                                ''}}
+                                            </option>
+                                        </select>
+                                    </p>
+                                    <p>
+                                        <input
+                                            class="w3-check"
+                                            type="checkbox"
+                                            v-model="hideReact"
+                                            :disabled="blindMode || frenzyCount > 1"
+                                        />
+                                        <label class="w3-validate"
+                                            >React: Hide Numbers</label
+                                        >
+                                    </p>
+                                    <p>
+                                        <input
+                                            class="w3-check"
+                                            type="checkbox"
+                                            v-model="hoverMode"
+                                            :disabled="leftRightClick"
+                                        />
+                                        <label class="w3-validate"
+                                            >Hover Mode</label
+                                        >
+                                    </p>
+                                    <p>
+                                        <input
+                                            class="w3-check"
+                                            type="checkbox"
+                                            v-model="blindMode"
+                                            :disabled="frenzyMode"
+                                        />
+                                        <label class="w3-validate"
+                                            >Blind Mode</label
+                                        >
+                                    </p>
+                                    <p>
+                                        <input
+                                            class="w3-check"
+                                            type="checkbox"
+                                            v-model="flashlightMode"
+                                        />
+                                        <label class="w3-validate"
+                                            >Flashlight Mode</label
+                                        >
+                                    </p>
+                                    <p>
+                                        <input
+                                            class="w3-check"
+                                            type="checkbox"
+                                            v-model="mathMode"
+                                            :disabled="lettersMode"
+                                        />
+                                        <label class="w3-validate"
+                                            >Math Mode</label
+                                        >
+                                    </p>
+                                    <p>
+                                        <input
+                                            class="w3-check"
+                                            type="checkbox"
+                                            v-model="lettersMode"
+                                            :disabled="mathMode"
+                                        />
+                                        <label class="w3-validate"
+                                            >Letters Mode</label
+                                        >
+                                    </p>
                                 </div>
                             </div>
                         </div>
 
-                        <hr style="margin: 10px 0" />
-
-                        <div class="w3-row w3-margin-0">
-                            <div
-                                class="w3-container w3-col w3-third w3-padding-0"
-                            >
-                                <p>
-                                    <input
-                                        class="w3-check"
-                                        type="checkbox"
-                                        v-model="showHover"
-                                    />
-                                    <label class="w3-validate"
-                                        >Show Hover</label
-                                    >
-                                </p>
-                                <p>
-                                    <input
-                                        class="w3-check"
-                                        type="checkbox"
-                                        v-model="showTrace"
-                                    />
-                                    <label class="w3-validate"
-                                        >Show Correct Cells</label
-                                    >
-                                </p>
-                                <p>
-                                    <input
-                                        class="w3-check"
-                                        type="checkbox"
-                                        v-model="showClickResult"
-                                    />
-                                    <label class="w3-validate"
-                                        >Show Click Result</label
-                                    >
-                                </p>
-                                <p>
-                                    <input
-                                        class="w3-check"
-                                        type="checkbox"
-                                        v-model="clearCorrect"
-                                    />
-                                    <label class="w3-validate"
-                                        >Empty Correct Cells</label
-                                    >
-                                </p>
-                                <p>
-                                    <input
-                                        class="w3-check"
-                                        type="checkbox"
-                                        v-model="showCenterDot"
-                                    />
-                                    <label class="w3-validate"
-                                        >Show Center Dot</label
-                                    >
-                                </p>
-                                <p>
-                                    <label class="w3-validate">Size: </label>
-                                    <input
-                                        id="tableSize"
-                                        v-model.number.lazy="tableSize"
-                                        type="number"
-                                        style="width: 50%"
-                                    />
-                                    <label class="w3-validate">px</label>
-                                </p>
-                                <p>
-                                    <label class="w3-validate">Font: </label>
-                                    <input
-                                        id="fontSize"
-                                        v-model.number.lazy="fontSize"
-                                        type="number"
-                                        style="width: 50%"
-                                    />
-                                    <label class="w3-validate">%</label>
-                                </p>
-                            </div>
-
-                            <div
-                                class="w3-container w3-col w3-third w3-padding-0"
-                            >
-                                <p>
-                                    <input
-                                        class="w3-check"
-                                        type="checkbox"
-                                        v-model="turnSymbols"
-                                    />
-                                    <label class="w3-validate"
-                                        >Turn Numbers</label
-                                    >
-                                </p>
-                                <p>
-                                    <input
-                                        class="w3-check"
-                                        type="checkbox"
-                                        v-model="spinSymbols"
-                                    />
-                                    <label class="w3-validate"
-                                        >Spin Numbers</label
-                                    >
-                                </p>
-                                <p>
-                                    <input
-                                        class="w3-check"
-                                        type="checkbox"
-                                        v-model="spinTable"
-                                    />
-                                    <label class="w3-validate"
-                                        >Spin Table</label
-                                    >
-                                    <select
-                                        id="frenzy"
-                                        class="w3-select w3-border w3-padding-small"
-                                        style="width: 30%"
-                                        v-model="spinTableSpeed"
-                                    >
-                                        <option value="speed1">Low</option>
-                                        <option value="speed2">Medium</option>
-                                        <option value="speed3">High</option>
-                                        <option value="speed4">CCW Low</option>
-                                        <option value="speed5">
-                                            CCW Medium
-                                        </option>
-                                        <option value="speed6">CCW High</option>
-                                    </select>
-                                </p>
-                                <p>
-                                    <input
-                                        class="w3-check"
-                                        type="checkbox"
-                                        v-model="noErrors"
-                                    />
-                                    <label class="w3-validate">No Errors</label>
-                                </p>
-                                <p>
-                                    <input
-                                        class="w3-check"
-                                        type="checkbox"
-                                        v-model="useClickSound"
-                                    />
-                                    <label class="w3-validate"
-                                        >Click Sound</label
-                                    >
-                                </p>
-                                <p>
-                                    <input
-                                        class="w3-check"
-                                        type="checkbox"
-                                        v-model="startOnClick"
-                                    />
-                                    <label class="w3-validate"
-                                        >Start Timer on Click</label
-                                    >
-                                </p>
-                                <p>
-                                    <input
-                                        class="w3-check"
-                                        type="checkbox"
-                                        v-model="leftRightClick"
-                                        :disabled="hoverMode"
-                                    />
-                                    <label class="w3-validate"
-                                        >Left/Right Click Colors</label
-                                    >
-                                </p>
-                            </div>
-
-                            <div
-                                class="w3-container w3-col w3-third w3-padding-0"
-                            >
-                                <p>
-                                    <input
-                                        class="w3-check"
-                                        type="checkbox"
-                                        v-model="shuffleSymbols"
-                                    />
-                                    <label class="w3-validate"
-                                        >Shuffle Numbers</label
-                                    >
-                                </p>
-                                <p>
-                                    <input
-                                        class="w3-check"
-                                        type="checkbox"
-                                        v-model="frenzyMode"
-                                        :disabled="blindMode"
-                                    />
-                                    <label class="w3-validate"
-                                        >Frenzy Mode</label
-                                    >
-                                    <select
-                                        id="frenzy"
-                                        class="w3-select w3-border w3-padding-small"
-                                        style="width: 30%"
-                                        v-model="frenzyCount"
-                                    >
-                                        <option
-                                            v-for="i in Array.from({length: maxFrenzyCount}, (_, i) => i + 1)"
-                                            :value="i"
-                                        >
-                                            {{i}}{{i === 1 ? ' (React)' : ''}}
-                                        </option>
-                                    </select>
-                                </p>
-                                <p>
-                                    <input
-                                        class="w3-check"
-                                        type="checkbox"
-                                        v-model="hideReact"
-                                        :disabled="blindMode || frenzyCount > 1"
-                                    />
-                                    <label class="w3-validate"
-                                        >React: Hide Numbers</label
-                                    >
-                                </p>
-                                <p>
-                                    <input
-                                        class="w3-check"
-                                        type="checkbox"
-                                        v-model="hoverMode"
-                                        :disabled="leftRightClick"
-                                    />
-                                    <label class="w3-validate"
-                                        >Hover Mode</label
-                                    >
-                                </p>
-                                <p>
-                                    <input
-                                        class="w3-check"
-                                        type="checkbox"
-                                        v-model="blindMode"
-                                        :disabled="frenzyMode"
-                                    />
-                                    <label class="w3-validate"
-                                        >Blind Mode</label
-                                    >
-                                </p>
-                                <p>
-                                    <input
-                                        class="w3-check"
-                                        type="checkbox"
-                                        v-model="flashlightMode"
-                                    />
-                                    <label class="w3-validate"
-                                        >Flashlight Mode</label
-                                    >
-                                </p>
-                                <p>
-                                    <input
-                                        class="w3-check"
-                                        type="checkbox"
-                                        v-model="mathMode"
-                                        :disabled="lettersMode"
-                                    />
-                                    <label class="w3-validate">Math Mode</label>
-                                </p>
-                                <p>
-                                    <input
-                                        class="w3-check"
-                                        type="checkbox"
-                                        v-model="lettersMode"
-                                        :disabled="mathMode"
-                                    />
-                                    <label class="w3-validate"
-                                        >Letters Mode</label
-                                    >
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="w3-container w3-margin" v-if="statsTabVisible">
-                        <table class="w3-table-all w3-large">
-                            <tr>
-                                <td>Time</td>
-                                <td>{{ stats.resultTimeString() }}</td>
-                            </tr>
-                            <tr
-                                :style="{ fontWeight: stats.totalTime() === personalBests[category()] ? 'bold' : 'normal' }"
-                            >
-                                <td>Personal Best</td>
-                                <td>{{ pbTimeString() }}</td>
-                            </tr>
-                            <tr>
-                                <td>Category</td>
-                                <td>{{ category() }}</td>
-                            </tr>
-                            <tr class="w3-pale-green">
-                                <td>Correct Clicks</td>
-                                <td>{{ stats.totalCorrectClicks() }}</td>
-                            </tr>
-                            <tr class="w3-pale-red">
-                                <td>Wrong Clicks</td>
-                                <td>{{ stats.totalWrongClicks() }}</td>
-                            </tr>
-                        </table>
                         <div
-                            class="w3-row"
-                            v-if="stats.rounds.length === roundCount"
+                            class="w3-container w3-margin"
+                            v-if="statsTabVisible"
                         >
-                            <div
-                                class="w3-row w3-col"
-                                :class="{'w3-half': roundCount > 1}"
-                                style="
-                                    margin-top: 5px;
-                                    overflow-y: scroll;
-                                    overflow-x: hidden;
-                                    max-height: 250px;
-                                "
-                            >
-                                <table
-                                    v-for="i in Array.from({length: roundCount}, (_, i) => i)"
-                                    class="w3-table-all w3-hoverable w3-centered"
+                            <table class="w3-table-all w3-large">
+                                <tr>
+                                    <td>Time</td>
+                                    <td>{{ stats.resultTimeString() }}</td>
+                                </tr>
+                                <tr
+                                    :style="{ fontWeight: stats.totalTime() === personalBests[category()] ? 'bold' : 'normal' }"
                                 >
-                                    <thead>
-                                        <tr
-                                            class="w3-light-grey"
-                                            v-if="roundCount > 1"
-                                        >
-                                            <th></th>
-                                            <th>
-                                                Round {{i + 1}} -
-                                                {{timeString(stats.rounds[i].duration)}}s
-                                            </th>
-                                            <th></th>
-                                        </tr>
-
-                                        <tr class="w3-light-grey">
-                                            <th>Group</th>
-                                            <th>Number</th>
-                                            <th>Time</th>
-                                        </tr>
-                                    </thead>
-                                    <tr
-                                        v-for="stat in stats.rounds[i].clicks"
-                                        :class="{'w3-pale-red': stat.err}"
-                                    >
-                                        <td
-                                            :style="{color: groupColorStyles[stat.groupN]}"
-                                        >
-                                            {{stat.groupN + 1}}
-                                        </td>
-                                        <td>{{stat.number}}</td>
-                                        <td>{{stat.time}}s</td>
-                                    </tr>
-                                </table>
-                            </div>
+                                    <td>Personal Best</td>
+                                    <td>{{ pbTimeString() }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Category</td>
+                                    <td>{{ category() }}</td>
+                                </tr>
+                                <tr class="w3-pale-green">
+                                    <td>Correct Clicks</td>
+                                    <td>{{ stats.totalCorrectClicks() }}</td>
+                                </tr>
+                                <tr class="w3-pale-red">
+                                    <td>Wrong Clicks</td>
+                                    <td>{{ stats.totalWrongClicks() }}</td>
+                                </tr>
+                            </table>
                             <div
-                                class="w3-row w3-col w3-half"
-                                style="margin-top: 5px"
-                                v-if="roundCount > 1 && !gameStarted"
+                                class="w3-row"
+                                v-if="stats.rounds.length === roundCount"
                             >
-                                <canvas
-                                    class="round-graph"
-                                    width="250"
-                                    height="250"
-                                    ref="roundGraphCanvas"
-                                />
+                                <div
+                                    class="w3-row w3-col"
+                                    :class="{'w3-half': roundCount > 1}"
+                                    style="
+                                        margin-top: 5px;
+                                        overflow-y: scroll;
+                                        overflow-x: hidden;
+                                        max-height: 250px;
+                                    "
+                                >
+                                    <table
+                                        v-for="i in Array.from({length: roundCount}, (_, i) => i)"
+                                        class="w3-table-all w3-hoverable w3-centered"
+                                    >
+                                        <thead>
+                                            <tr
+                                                class="w3-light-grey"
+                                                v-if="roundCount > 1"
+                                            >
+                                                <th></th>
+                                                <th>
+                                                    Round {{i + 1}} -
+                                                    {{timeString(stats.rounds[i].duration)}}s
+                                                </th>
+                                                <th></th>
+                                            </tr>
+
+                                            <tr class="w3-light-grey">
+                                                <th>Group</th>
+                                                <th>Number</th>
+                                                <th>Time</th>
+                                            </tr>
+                                        </thead>
+                                        <tr
+                                            v-for="stat in stats.rounds[i].clicks"
+                                            :class="{'w3-pale-red': stat.err}"
+                                        >
+                                            <td
+                                                :style="{color: groupColorStyles[stat.groupN]}"
+                                            >
+                                                {{stat.groupN + 1}}
+                                            </td>
+                                            <td>{{stat.number}}</td>
+                                            <td>{{stat.time}}s</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div
+                                    class="w3-row w3-col w3-half"
+                                    style="margin-top: 5px"
+                                    v-if="roundCount > 1 && !gameStarted"
+                                >
+                                    <canvas
+                                        class="round-graph"
+                                        width="250"
+                                        height="250"
+                                        ref="roundGraphCanvas"
+                                    />
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div
-                        class="w3-container w3-margin-top w3-center"
-                        v-if="mousemapTabVisible"
-                    >
-                        <canvas
-                            class="mouse-map"
-                            width="600"
-                            height="600"
-                            ref="mousemap_canvas"
+                        <div
+                            class="w3-container w3-margin-top w3-center"
+                            v-if="mousemapTabVisible"
                         >
-                        </canvas>
-                    </div>
+                            <canvas
+                                class="mouse-map"
+                                width="600"
+                                height="600"
+                                ref="mousemap_canvas"
+                            >
+                            </canvas>
+                        </div>
 
-                    <footer class="w3-container w3-light-grey w3-center">
-                        <button
-                            type="button"
-                            class="w3-btn w3-indigo w3-text-white w3-xlarge"
-                            style="width: 80%; margin: 10px"
-                            @click="hideDialog(); startGame()"
-                            ref="btn"
-                        >
-                            Start Test
-                        </button>
-                    </footer>
+                        <footer class="w3-container w3-light-grey w3-center">
+                            <button
+                                type="button"
+                                class="w3-btn w3-indigo w3-text-white w3-xlarge"
+                                style="width: 80%; margin: 10px"
+                                @click="hideDialog(); startGame()"
+                                ref="btn"
+                            >
+                                Start Test
+                            </button>
+                        </footer>
+                    </div>
                 </div>
             </div>
         </div>

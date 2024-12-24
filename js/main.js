@@ -1,4 +1,4 @@
-import Vue from './vue.esm.browser.min.js';
+import { createApp, nextTick } from 'vue';
 
 import Cell from './modules/cell.js';
 import Group from './modules/group.js';
@@ -195,21 +195,10 @@ const appData = (window.appData = {
     },
 });
 
-Vue.directive('focus', {
-    // https://jsfiddle.net/LukaszWiktor/cap43pdn/
-    inserted(el) {
-        el.focus();
+const app = (window.app = createApp({
+    data() {
+        return appData;
     },
-    update(el) {
-        Vue.nextTick(function () {
-            el.focus();
-        });
-    },
-});
-
-const vueApp = (window.vueApp = new Vue({
-    el: '#app',
-    data: appData,
     created() {
         this.tableSize = Math.min(
             this.tableSize,
@@ -1187,3 +1176,15 @@ const vueApp = (window.vueApp = new Vue({
         },
     },
 }));
+
+app.directive('focus', {
+    mounted(el) {
+        el.focus();
+    },
+    async updated(el) {
+        await nextTick();
+        el.focus();
+    },
+});
+
+app.mount('#app-wrapper');
