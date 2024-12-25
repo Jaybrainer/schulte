@@ -81,7 +81,6 @@ const appData = (window.appData = {
     hideReact: false,
     hoverMode: false,
     blindMode: false,
-    flashlightMode: false,
     mathMode: false,
     lettersMode: false,
     leftRightClick: false,
@@ -226,13 +225,6 @@ const app = (window.app = createApp({
         }
     },
     watch: {
-        flashlightMode(val) {
-            if (!val) {
-                for (const cell of this.cells) {
-                    cell.opacity = 1;
-                }
-            }
-        },
         gridSize(val) {
             this.setCSSVar('--grid-size', this.gridSize);
 
@@ -921,9 +913,6 @@ const app = (window.app = createApp({
             if (this.startOnClick) {
                 category += ' ST';
             }
-            if (this.flashlightMode) {
-                category += ' FL';
-            }
             if (this.leftRightClick) {
                 category += ' LR';
             }
@@ -950,38 +939,6 @@ const app = (window.app = createApp({
             this.mouseTracking = false;
         },
         appendMouseMove(event) {
-            if (
-                this.flashlightMode &&
-                !(this.blindMode && this.stats.correctClicks >= 1)
-            ) {
-                const x = event.x;
-                const y = event.y;
-                for (let i = 0; i < this.gridSize * this.gridSize; i++) {
-                    const cell = this.cells[i];
-                    if (
-                        this.frenzyMode &&
-                        (cell.orderIndex < this.currOrderIndex ||
-                            this.currOrderIndex + this.frenzyCount - 1 <
-                                cell.orderIndex)
-                    ) {
-                        continue;
-                    }
-                    const elem = document.getElementById(`cell-${i}`);
-                    const rect = elem.getBoundingClientRect();
-                    const cellMidX = rect.x + rect.width / 2;
-                    const cellMidY = rect.y + rect.height / 2;
-                    const dist = Math.sqrt(
-                        (cellMidX - x) * (cellMidX - x) +
-                            (cellMidY - y) * (cellMidY - y),
-                    );
-
-                    let opacity =
-                        (this.tableSize * 0.35 - dist) / (this.tableSize * 0.1);
-                    if (opacity > 1) opacity = 1;
-                    if (opacity < 0.5) opacity = 0;
-                    cell.opacity = opacity;
-                }
-            }
             if (this.mouseTracking) {
                 const shiftX = (window.innerWidth - this.tableWidth) / 2;
                 const shiftY = (window.innerHeight - this.tableHeight) / 2;
