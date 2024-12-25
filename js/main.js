@@ -245,11 +245,26 @@ const app = (window.app = createApp({
         clearCorrect() {
             this.initGame();
         },
-        spinSymbols() {
-            this.updateSymbolSpins();
+        spinSymbols(val) {
+            if (!val) {
+                for (const cell of this.cells) {
+                    cell.cssClasses['spin-left'] = false;
+                    cell.cssClasses['spin-right'] = false;
+                }
+            } else {
+                this.randomiseSymbolSpins();
+            }
         },
-        turnSymbols() {
-            this.updateSymbolTurns();
+        turnSymbols(val) {
+            if (!val) {
+                for (const cell of this.cells) {
+                    cell.cssClasses['rotate-90'] = false;
+                    cell.cssClasses['rotate-180'] = false;
+                    cell.cssClasses['rotate-270'] = false;
+                }
+            } else {
+                this.randomiseSymbolTurns();
+            }
         },
         frenzyMode() {
             this.initGame();
@@ -355,8 +370,12 @@ const app = (window.app = createApp({
             this.clearIndexes();
             this.makeGridCells();
             this.shuffleCells();
-            this.updateSymbolTurns();
-            this.updateSymbolSpins();
+            if (this.spinSymbols) {
+                this.randomiseSymbolSpins();
+            }
+            if (this.turnSymbols) {
+                this.randomiseSymbolTurns();
+            }
             this.updateUnderlines();
             this.tableWidth = this.tableSize;
             this.tableHeight = this.tableSize;
@@ -781,41 +800,20 @@ const app = (window.app = createApp({
                 this.restartMouseTracking();
             }
         },
-        updateSymbolSpins() {
-            for (let i = 0; i < this.cells.length; i++) {
-                this.cells[i].cssClasses['spin-left'] = false;
-                this.cells[i].cssClasses['spin-right'] = false;
-                if (this.spinSymbols) {
-                    const rnd = Math.floor(Math.random() * 2);
-                    if (rnd === 0) {
-                        this.cells[i].cssClasses['spin-left'] = true;
-                    } else {
-                        this.cells[i].cssClasses['spin-right'] = true;
-                    }
-                }
+        randomiseSymbolSpins() {
+            for (const cell of this.cells) {
+                const spinLeft = Math.floor(Math.random() * 2) === 0;
+                cell.cssClasses['spin-left'] = spinLeft;
+                cell.cssClasses['spin-right'] = !spinLeft;
             }
         },
-        updateSymbolTurns() {
-            for (let i = 0; i < this.cells.length; i++) {
-                this.cells[i].cssClasses['rotate-90'] = false;
-                this.cells[i].cssClasses['rotate-180'] = false;
-                this.cells[i].cssClasses['rotate-270'] = false;
-                if (this.turnSymbols) {
-                    const rnd = Math.floor(Math.random() * 4);
-                    switch (rnd) {
-                        case 0:
-                            this.cells[i].cssClasses['rotate-90'] = true;
-                            break;
-                        case 1:
-                            this.cells[i].cssClasses['rotate-180'] = true;
-                            break;
-                        case 2:
-                            this.cells[i].cssClasses['rotate-270'] = true;
-                            break;
-                        default:
-                        // no turn
-                    }
-                }
+        randomiseSymbolTurns() {
+            for (const cell of this.cells) {
+                const d = Math.floor(Math.random() * 4);
+                // cell.cssClasses['rotate-0'] = d === 0; // no class for 0 or 360 turn
+                cell.cssClasses['rotate-90'] = d === 1;
+                cell.cssClasses['rotate-180'] = d === 2;
+                cell.cssClasses['rotate-270'] = d === 3;
             }
         },
         updateUnderlines() {
