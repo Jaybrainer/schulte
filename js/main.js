@@ -481,19 +481,9 @@ const app = (window.app = createApp({
                 return;
             }
 
-            let correctClick = this.isCellCorrect(this.clickIndex);
             const currGroup = this.cells[this.clickIndex].group;
-            if (this.leftRightClick) {
-                if (
-                    (this.cells[this.clickIndex].rightClick &&
-                        this.lastClickButton != 2) ||
-                    (!this.cells[this.clickIndex].rightClick &&
-                        this.lastClickButton != 0)
-                )
-                    correctClick = false;
-            }
 
-            if (correctClick) {
+            if (this.isCellCorrect(this.clickIndex)) {
                 if (this.clickSound && this.useClickSound) {
                     // play click sound and copy so they can overlap
                     let newBoop = this.clickSound.cloneNode();
@@ -582,7 +572,14 @@ const app = (window.app = createApp({
             }
         },
         isCellCorrect(cellIdx) {
-            return this.cells[cellIdx].orderIndex === this.currOrderIndex;
+            const cell = this.cells[cellIdx];
+            if (
+                this.leftRightClick &&
+                this.lastClickButton != (cell.rightClick ? 2 : 0)
+            ) {
+                return false;
+            }
+            return cell.orderIndex === this.currOrderIndex;
         },
         indexOfCurrentOrderIndex() {
             for (let i = 0; i < this.cells.length; i++) {
