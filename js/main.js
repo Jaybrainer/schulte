@@ -47,7 +47,6 @@ const appData = (window.appData = {
     hasClickedYet: false,
     timerMinutes: 5,
     frenzyCount: 3,
-    currGroup: 0,
     groups: [], // array of Group: setups in makeGridCells() method
 
     newGroupColorStyles: ['black', 'blue', 'green', '#d90', 'red', 'magenta'],
@@ -357,7 +356,6 @@ const app = (window.app = createApp({
         },
         initTable() {
             this.clearIndexes();
-            this.currGroup = 0;
             this.makeGridCells();
             this.shuffleCells();
             this.updateSymbolTurns();
@@ -483,6 +481,7 @@ const app = (window.app = createApp({
             }
 
             let correctClick = this.isCellCorrect(this.clickIndex);
+            const currGroup = this.cells[this.clickIndex].group;
             if (this.leftRightClick) {
                 if (
                     (this.cells[this.clickIndex].rightClick &&
@@ -502,11 +501,11 @@ const app = (window.app = createApp({
                 }
                 this.stats.correctClicks++;
                 this.stats.addClick(
-                    this.currGroup,
+                    currGroup,
                     this.cells[this.clickIndex].number,
                     false,
-                    this.groups[this.currGroup].inverted,
-                    this.groups[this.currGroup].divergent,
+                    this.groups[currGroup].inverted,
+                    this.groups[currGroup].divergent,
                 );
                 this.cells[this.clickIndex].traced = true;
                 if (this.clearCorrect) {
@@ -576,11 +575,11 @@ const app = (window.app = createApp({
                 }
                 this.stats.wrongClicks++;
                 this.stats.addClick(
-                    this.currGroup,
+                    currGroup,
                     this.cells[this.clickIndex].number,
                     true,
-                    this.groups[this.currGroup].inverted,
-                    this.groups[this.currGroup].divergent,
+                    this.groups[currGroup].inverted,
+                    this.groups[currGroup].divergent,
                 );
                 this.correctIndex = -1;
             }
