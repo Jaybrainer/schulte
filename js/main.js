@@ -431,6 +431,12 @@ const app = (window.app = createApp({
             if (this.gameStarted && this.hoverMode) {
                 this.clickIndex = cellIdx;
                 if (this.isCellCorrect(this.clickIndex)) {
+                    if (this.startOnClick && !this.hasClickedYet) {
+                        const now = performance.now();
+                        this.stats.startTime = now;
+                        this.stats.lastTime = now;
+                        this.hasClickedYet = true;
+                    }
                     this.nextTurn();
                 }
             }
@@ -441,11 +447,17 @@ const app = (window.app = createApp({
             } // else if (event.button != 0) return;
             if (this.betweenRounds) return;
             if (this.gameStarted) {
-                if (this.startOnClick && !this.hasClickedYet) {
-                    this.stats.startTime = performance.now();
+                this.clickIndex = cellIdx;
+                if (
+                    this.isCellCorrect(this.clickIndex) &&
+                    this.startOnClick &&
+                    !this.hasClickedYet
+                ) {
+                    const now = performance.now();
+                    this.stats.startTime = now;
+                    this.stats.lastTime = now;
                     this.hasClickedYet = true;
                 }
-                this.clickIndex = cellIdx;
                 if (this.showClickResult) {
                     if (this.showClickAnimation) {
                         clearTimeout(this.selectedTimerId);
