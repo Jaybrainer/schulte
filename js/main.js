@@ -220,12 +220,11 @@ const app = (window.app = createApp({
     },
     watch: {
         gridSize(val) {
-            this.setCSSVar('--grid-size', this.gridSize);
+            this.setCSSVar('--grid-size', val);
 
             this.initGame();
         },
-        groupCount(val) {
-            this.groupCount = val;
+        groupCount() {
             this.initGame();
         },
         inverseCount() {
