@@ -64,7 +64,6 @@ const appData = (window.appData = {
 
     hoverIndex: -1,
     clickIndex: -1,
-    correctIndex: -1,
     currOrderIndex: 0,
 
     clearCorrect: true,
@@ -310,7 +309,10 @@ const app = (window.app = createApp({
 
             // apply click state
             if (this.showClickAnimation && this.clickIndex == i) {
-                if (i == this.correctIndex) {
+                if (
+                    this.cells[this.clickIndex].orderIndex ===
+                    this.currOrderIndex - 1
+                ) {
                     classes['correct-cell'] = true;
                 } else if (
                     !(this.frenzyMode && this.frenzyCount == 1) &&
@@ -421,7 +423,6 @@ const app = (window.app = createApp({
         clearIndexes() {
             this.hoverIndex = -1;
             this.clickIndex = -1;
-            this.correctIndex = -1;
             this.currOrderIndex = 0;
         },
         setHoveredCell(cellIdx, event) {
@@ -539,10 +540,7 @@ const app = (window.app = createApp({
                 }
                 if (this.shuffleSymbols) {
                     this.shuffleCells();
-                    this.correctIndex = this.indexOfCorrectCell();
-                    this.clickIndex = this.correctIndex;
-                } else {
-                    this.correctIndex = this.clickIndex;
+                    this.clickIndex = this.indexOfCurrentOrderIndex();
                 }
 
                 if (this.stats.correctClicks === this.cells.length) {
@@ -581,21 +579,18 @@ const app = (window.app = createApp({
                     this.groups[currGroup].inverted,
                     this.groups[currGroup].divergent,
                 );
-                this.correctIndex = -1;
             }
         },
         isCellCorrect(cellIdx) {
             return this.cells[cellIdx].orderIndex === this.currOrderIndex;
         },
-        indexOfCorrectCell() {
-            let index = -1;
+        indexOfCurrentOrderIndex() {
             for (let i = 0; i < this.cells.length; i++) {
-                if (this.isCellCorrect(i)) {
-                    index = i;
-                    break;
+                if (this.cells[i].orderIndex === this.currentOrderIndex) {
+                    return i;
                 }
             }
-            return index;
+            return -1;
         },
         indexOfCellByNumber(number) {
             let index = -1;
