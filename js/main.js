@@ -45,7 +45,6 @@ const appData = (window.appData = {
     useClickSound: false,
     startOnClick: false,
     hasClickedYet: false,
-    timerMinutes: 5,
     frenzyCount: 3,
     groups: [], // array of Group: setups in makeGridCells() method
 
@@ -69,7 +68,7 @@ const appData = (window.appData = {
     clearCorrect: true,
     showHover: true,
     showClickResult: true,
-    showClickAnimation: true,
+    clickAnimationShown: true,
     showTrace: true,
     showCenterDot: false,
     shuffleSymbols: false,
@@ -94,9 +93,6 @@ const appData = (window.appData = {
     tableWidth: 600,
     tableHeight: 600,
     cellFontSize: 16,
-    selectTimeOut: 500,
-    selectedTimerId: -1,
-    gameTimerId: -1,
 
     dialogShowed: false,
     settingsTabVisible: true,
@@ -308,7 +304,7 @@ const app = (window.app = createApp({
             }
 
             // apply click state
-            if (this.showClickAnimation && this.clickIndex == i) {
+            if (this.clickAnimationShown && this.clickIndex == i) {
                 if (
                     this.cells[this.clickIndex].orderIndex ===
                     this.currOrderIndex - 1
@@ -400,7 +396,6 @@ const app = (window.app = createApp({
         },
         stopGame() {
             this.clearIndexes();
-            clearTimeout(this.selectedTimerId);
             this.gameStarted = false;
             this.stopMouseTracking();
         },
@@ -458,16 +453,9 @@ const app = (window.app = createApp({
                     this.hasClickedYet = true;
                 }
                 if (this.showClickResult) {
-                    if (this.showClickAnimation) {
-                        clearTimeout(this.selectedTimerId);
-                    }
-                    this.showClickAnimation = true;
-                    this.selectedTimerId = setTimeout(
-                        this.hideSelect,
-                        this.selectTimeOut,
-                    );
+                    this.clickAnimationShown = true;
                 } else {
-                    this.showClickAnimation = false;
+                    this.clickAnimationShown = false;
                 }
 
                 this.appendMouseClick(event);
@@ -748,14 +736,6 @@ const app = (window.app = createApp({
                     this.cells[other] = temp;
                 }
             }
-        },
-        hideSelect() {
-            this.showClickAnimation = false;
-        },
-        gameTimerOut() {
-            this.stopGame();
-            clearTimeout(this.gameTimerId);
-            this.execDialog('stats');
         },
         execDialog(tabName) {
             this.stopGame();
